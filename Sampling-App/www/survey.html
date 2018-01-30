@@ -1,0 +1,34 @@
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="center">Survey</div>
+    </div>
+</div>
+<div class="pages">
+    <div data-page="survey" class="page">
+        <div class="page-content">
+            <div class="content-block survey">
+				
+				<!--Title of survey-->
+                <h1>Survey</h1>
+				
+				<!--start question form; NOTICE: id has to be questions-->
+				<form id="questions">
+					
+					<!--Everything in the header will be before the questions-->
+					<div id="header">
+						<p>Please awnser all the questions correctly.</p>
+					</div>
+				    
+					<!--Questions will come here-->
+					
+					<!--Everything in the footer will be below the questions-->
+					<div id="footer">
+						<div id="submit" class="button" onClick="survey.send();">Submit</div>
+					</div>
+					
+					<!--End of form-->
+				</form>
+            </div>
+        </div>
+    </div>
+</div>

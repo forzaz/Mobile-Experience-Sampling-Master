@@ -1,0 +1,21 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.eindhoven.samplingApp"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.eindhoven.samplingApp"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "com.eindhoven.samplingApp"
+        }
+    },
+    "dependent_plugins": {}
+}
