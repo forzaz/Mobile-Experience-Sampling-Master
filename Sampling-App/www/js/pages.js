@@ -1,5 +1,6 @@
 // Initialize app
 var myApp = new Framework7();
+var storage = window.localStorage;
 var $$ = Dom7;
 var view = myApp.addView('.view-main', {dynamicNavbar: true});
 
@@ -9,6 +10,13 @@ var view = myApp.addView('.view-main', {dynamicNavbar: true});
 $$(document).on('deviceready', function() {
 	//App started
     view.hideNavbar(false);
+	
+	//storage.setItem("login", false);
+	
+	if(storage.getItem("login") === "true")
+	{
+		view.router.loadPage('menu.html');
+	}
 });
 
 // Handle page events
