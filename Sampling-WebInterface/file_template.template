@@ -1,0 +1,19 @@
+<?php
+
+//Check if incoming request is valid
+require 'php/conf.php';
+require 'php/Autorize.php';
+if(Autorize::check())
+{
+	//connect to database
+	$db = new Database();
+	
+	//execute some database code
+	//e.g. to select data
+	$result = $db->query("SELECT * FROM table_name");
+	
+	//close database
+	$db->close();
+}
+
+?>
