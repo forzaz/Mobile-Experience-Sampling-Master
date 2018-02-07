@@ -4,9 +4,10 @@ var survey = new function() {
 	
 	this.retrieveQuestions = function(){
 		$$.ajax({
-			url:WEB_BASE+"getQuestions.php"+Autorization(),
+			url:WEB_BASE+"getQuestions.php"+AUTORIZATION,
 			success: function(result){
 				var HTML = '';
+				var labels;
 				var questions = result.split("<br/>");
 
 				questions.pop();
@@ -14,42 +15,50 @@ var survey = new function() {
 				questions.forEach(function(question) {
 					var data = question.split("::");
 					if(renderQuestion(data[0])){
-						HTML += "<p>"+data[1]+"</p>";
+						HTML += "<p class='question'>"+data[1]+"</p>";
 						qData.push({name:"q"+data[0],type:data[2]});
 						switch(data[2])
 						{
 							case "ShortText":
-								HTML += "<input type='text' name='q"+data[0]+"' />";
+								HTML += "<input class='SOQ' type='text' name='q"+data[0]+"' />";
 							break;
 
 							case "LongText":
-								HTML += "<textarea name='q"+data[0]+"'></textarea>";
+								HTML += "<textarea class='LOQ' name='q"+data[0]+"'></textarea>";
 							break;
 
 							case "Select":
-								var labels = data[3].split(";");
+								labels = data[3].split(";");
 								labels.forEach(function(label) {
-									if(!label.endsWith("-s")) HTML += "<input type='radio' name='q"+data[0]+"' id='"+label+"' value='"+label+"' />";
-									else
+									if(label.endsWith("-s"))
 									{
 										label = label.replace("-s","");
+										HTML += "<label class='radiocontainer'>"+label;
 										HTML += "<input type='radio' name='q"+data[0]+"' id='"+label+"' value='"+label+"' checked='checked' />";
 									}
-									HTML += "<label for='"+label+"'>"+label+"</label>";
+									else
+									{
+										HTML += "<label class='radiocontainer'>"+label;
+										HTML += "<input type='radio' name='q"+data[0]+"' id='"+label+"' value='"+label+"' />";
+									}
+									HTML += "<span class='radiocheckmark'></span>";
+									HTML += "</label>";
 								});
 							break;
 
 							case "MultiSelect":
-								var labels = data[3].split(";");
+								labels = data[3].split(";");
 								labels.forEach(function(label) {
+									HTML += "<label class='checkContainer'>"+label;
 									HTML += "<input type='checkbox' name='q"+data[0]+"' id='"+label+"' value='"+label+"' />";
-									HTML += "<label for='"+label+"'>"+label+"</label>";
+									HTML += "<span class='checkmark'></span>";
+									HTML += "</label>";
 								});
 							break;
 
 							case "Likert":
-								var labels;
-								if(data[3] == "5" || data[3] == "7" || data[3] == "9")
+								labels = [];
+								if(data[3] === "5" || data[3] === "7" || data[3] === "9")
 								{
 									switch(data[3])
 									{
@@ -59,34 +68,45 @@ var survey = new function() {
 									}
 								}
 								else labels = data[3].split(";");
-
+								
+								HTML += "<div class='likert'>";
 								labels.forEach(function(label) {
-									if(!label.endsWith("-s")) HTML += "<input class='likert' type='radio' name='q"+data[0]+"' id='"+label+"' value='"+label+"' />";
-									else
+									if(label.endsWith("-s"))
 									{
 										label = label.replace("-s","");
-										HTML += "<input class='likert' type='radio' name='q"+data[0]+"' id='"+label+"' value='"+label+"' checked='checked' />";
+										HTML += "<label class='radiocontainer'>"+label;
+										HTML += "<input type='radio' name='q"+data[0]+"' id='"+label+"' value='"+label+"' checked='checked' />";
+									} 
+									else
+									{
+										HTML += "<label class='radiocontainer'>"+label;
+										HTML += "<input type='radio' name='q"+data[0]+"' id='"+label+"' value='"+label+"' />";
 									}
-									HTML += "<label for='"+label+"'>"+label+"</label>";
+									HTML += "<span class='radiocheckmark'></span>";
+									HTML += "</label>";
 								});
+								HTML += "</div>";
 							break;
 
 							case "Slider":
 								var values = data[3].split("<");
-								HTML += "<input type='range' class='slider' name='q"+data[0]+"' min='"+values[0]+"' value='"+values[1]+"' max='"+values[2]+"'>";
+								HTML += "<div class='slider'>";
+								HTML += values[0]+" <input type='range' name='q"+data[0]+"' id='q"+data[0]+"' min='"+values[0]+"' value='"+values[1]+"' max='"+values[2]+"' oninput='sliderOutput("+data[0]+")'> "+values[2];
+								HTML += "<br/><output name='f"+data[0]+"' for='q"+data[0]+"'>"+values[1]+"</output>";
+								HTML += "</div>";
 							break;
 
 							case "Date":
-								HTML += "<input type='date' name='q"+data[0]+"' />";
+								HTML += "<input class='dateQ' type='date' name='q"+data[0]+"' />";
 							break;
 
 							case "Time":
-								HTML += "<input type='time' name='q"+data[0]+"' />";
+								HTML += "<input class='timeQ' type='time' name='q"+data[0]+"' />";
 							break;
 
 							case "Dropdown":
-								HTML += "<select name='q"+data[0]+"'>";
-								var labels = data[3].split(";");
+								HTML += "<select class='dropQ' name='q"+data[0]+"'>";
+								labels = data[3].split(";");
 								labels.forEach(function(label) {
 									HTML += "<option value='"+label+"'>"+label+"</option>";
 								});
@@ -94,15 +114,31 @@ var survey = new function() {
 							break;
 
 							case "Location":
+								HTML += "<div class='fileContainer Location'>";
+								
 								HTML += "<a href='#' class='button'>Choose Location</a>";
 							break;
 
 							case "Recording":
-								HTML += "<a href='#' class='button'>Record Audio</a>";
+								HTML += "<div class='fileContainer Recording'>";
+								HTML += "<div class='optionContainer'>";
+								HTML += "	<button class='button voice'></button>";
+								HTML += "	<p class='label'>Record</p>";
+								HTML += "</div></div>";
 							break;
 
 							case "Photo":
-								HTML += "<a href='#' class='button'>Take Photo</a>";
+								HTML += "<div class='fileContainer Image'><div class='optionContainer'>";
+								HTML += "	<button class='button camera'></button>";
+								HTML += "	<p class='label'>Camera</p>";
+								HTML += "</div>";
+								HTML += "<div class='optionContainer'>";
+								HTML += "	<button class='button album'></button>";
+								HTML += "	<p>Album</p>";
+								HTML += "</div>";
+
+								HTML += "<div class='preview'><div class='close'></div></div>";
+								HTML += "</div>"
 							break;
 						}
 					}
@@ -164,7 +200,7 @@ var survey = new function() {
 	
 	this.send = function(){
 		$$.ajax({
-			url:WEB_BASE+"saveQuestions.php"+Autorization()+this.response()+this.serialize(),
+			url:WEB_BASE+"saveQuestions.php"+AUTORIZATION+this.response()+this.serialize(),
 			success: function(result){
 				
 				myApp.alert("Your response is saved, thank you!");
@@ -180,3 +216,9 @@ var survey = new function() {
 		});
 	};
 };
+
+function sliderOutput(id)
+{
+	$$("output[name='f"+id+"']").html($$("input[name='q"+id+"']").val());
+	
+}
