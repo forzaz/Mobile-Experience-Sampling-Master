@@ -15,6 +15,19 @@ class Utilities{
 	}
 	
 	/*
+		This function return sanitized $_POST variable,
+		or false when the variable does not exist.
+		- $name = variable name in the URL.
+	*/
+	public static function getPostAndSanitize($name)
+	{
+		if(!($var = filter_input(INPUT_POST, $name, FILTER_SANITIZE_STRING)))
+			$var = false;
+		
+		return $var;
+	}
+	
+	/*
 		This function takes a string value and returns it to a form suitable
 		for sql queries.
 		- $string = string that has to be formatted
