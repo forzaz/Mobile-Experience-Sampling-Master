@@ -12,6 +12,7 @@ $$(document).on('deviceready', function() {
     view.hideNavbar(false);
 	
 	//storage.setItem("login", false);
+	$$('#login').on('click', autorizeUser);
 	
 	if(storage.getItem("login") === "true")
 	{
@@ -29,4 +30,5 @@ myApp.onPageInit('survey', function (page) {
 	
 	survey.startdate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 	survey.retrieveQuestions();
+	myApp.alert('questions loaded');
 });

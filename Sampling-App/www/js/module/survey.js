@@ -128,17 +128,17 @@ var survey = new function() {
 							break;
 
 							case "Photo":
-								HTML += "<div class='fileContainer Image'><div class='optionContainer'>";
-								HTML += "	<button class='button camera'></button>";
+								HTML += "<div class='fileContainer Image' name='q"+data[0]+"'><div class='optionContainer'>";
+								HTML += "	<div id='takePic' class='button camera' name='q"+data[0]+"'></div>";
 								HTML += "	<p class='label'>Camera</p>";
 								HTML += "</div>";
 								HTML += "<div class='optionContainer'>";
-								HTML += "	<button class='button album'></button>";
+								HTML += "	<div id='choosePic' class='button album'></div>";
 								HTML += "	<p>Album</p>";
 								HTML += "</div>";
 
-								HTML += "<div class='preview'><div class='close'></div></div>";
-								HTML += "</div>"
+								HTML += "<div class='preview'><div class='close'></div><img id='preview' /></div>";
+								HTML += "</div>";
 							break;
 						}
 					}
@@ -146,6 +146,13 @@ var survey = new function() {
 
 				HTML = $$("#questions #header").html()+HTML+$$("#questions #footer").html();
 				$$("#questions").html(HTML);
+				
+				$$("#survey_submit").on('click', survey.send);
+				$$("#takePic").on('click',function(){
+					cameraManager.qID = $$(this).attr("name");
+					cameraManager.takePicture();
+				});
+				$$("#choosePic").on('click',cameraManager.choosePicture);
 			},
 			error(xhr,status,error){
 				myApp.alert('error data');
@@ -185,6 +192,13 @@ var survey = new function() {
 						});
 					}
 				break;
+				case "Photo":
+					imageURI = $$(".fileContainer[name='"+q.name+"'] #preview").attr("src");
+					if(imageURI !== "")
+					{
+						val += survey.uploadFile(q.name,"img");
+					}
+				break;
 			}
 			
 			if(val === ""){ val = "Empty";}
@@ -198,19 +212,65 @@ var survey = new function() {
 		return "&UID="+storage.getItem("Uid")+"&sd="+this.startdate.replace(" ","%20");
 	};
 	
+	this.uploadFile = function(qID,format){
+		var options = new FileUploadOptions();
+		var path = "files/";
+		var filename = "";
+		
+		switch(format)
+		{
+			case "img":
+				imageURI = $$(".fileContainer[name='"+qID+"'] #preview").attr("src");
+				
+				path+="images/";
+				filename = "image_" + survey.startdate.replace(/\s|:/g,"-") + "_" + Math.floor(Math.random()*10000) + ".jpg";
+        		
+				options.fileKey = "file";
+        		options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+        		options.mimeType = "image/jpeg";
+        		options.chunkedMode = false;
+			break;
+		}
+		
+		var params = {};
+        params.filename = filename;
+		options.params = params;
+
+		var ft = new FileTransfer();
+        ft.upload(
+			imageURI,
+			"http://surveyhti.nfshost.com/survey/saveFiles.php"+AUTORIZATION+"&format="+format, 
+			function(result){
+        		//alert('result : ' + JSON.stringify(result));
+        	}, function(error){
+        		//alert('error : ' + JSON.stringify(error));
+			}, options
+		);
+		
+		return path+filename;
+
+	};
+	
 	this.send = function(){
 		$$.ajax({
-			url:WEB_BASE+"saveQuestions.php"+AUTORIZATION+this.response()+this.serialize(),
+			url:WEB_BASE+"saveQuestions.php"+AUTORIZATION+survey.response()+survey.serialize(),
 			success: function(result){
+				var data = result.split("::");
 				
-				myApp.alert("Your response is saved, thank you!");
-				view.router.reloadPreviousPage("menu.html");
+				if(data[0] === "success")
+				{
+					myApp.alert("Your response is saved, thank you!");
+					view.router.loadPage('menu.html');
+				}
+				else
+				{
+					myApp.alert('Something went wrong, your response is not saved');
+				}
 				
 			},
 			error(xhr,status,error){
 				
 				myApp.alert('Something went wrong, your response is not saved');
-				
 				//$$("#questions").html(status + " " + error);
 			}
 		});

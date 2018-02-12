@@ -1,0 +1,33 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-camera": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-geolocation": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-media": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    }
+  },
+  "dependent_plugins": {}
+}
