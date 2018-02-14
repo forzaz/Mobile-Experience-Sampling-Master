@@ -12,10 +12,13 @@
     "dependencies": {
         "cordova-android": "^7.0.0",
         "cordova-ios": "^4.5.4",
+        "cordova-plugin-badge": "^0.8.7",
         "cordova-plugin-camera": "^4.0.2",
+        "cordova-plugin-device": "^2.0.1",
         "cordova-plugin-file": "^6.0.1",
         "cordova-plugin-file-transfer": "^1.7.1",
         "cordova-plugin-geolocation": "^4.0.1",
+        "cordova-plugin-local-notification": "^0.9.0-beta.2",
         "cordova-plugin-local-notifications": "^1.0.0",
         "cordova-plugin-media": "^5.0.2",
         "cordova-plugin-network-information": "^2.0.1",
@@ -31,7 +34,9 @@
                 "KEEP_AVAUDIOSESSION_ALWAYS_ACTIVE": "NO"
             },
             "cordova-plugin-file": {},
-            "cordova-plugin-file-transfer": {}
+            "cordova-plugin-file-transfer": {},
+            "cordova-plugin-local-notification": {},
+            "cordova-plugin-device": {}
         },
         "platforms": [
             "android",

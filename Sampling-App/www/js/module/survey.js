@@ -113,31 +113,38 @@ var survey = new function() {
 								HTML += "</select>";
 							break;
 
-							case "Location":
-								HTML += "<div class='fileContainer Location'>";
-								
-								HTML += "<a href='#' class='button'>Choose Location</a>";
+							case "ShareLocation":
+								HTML += "<label id='shareLoc' class='checkContainer'>I accept to share my current location";
+								HTML += "<input type='checkbox' name='q"+data[0]+"' id='accept' value='' />";
+								HTML += "<span class='checkmark'></span>";
+								HTML += "</label>";
 							break;
 
 							case "Recording":
-								HTML += "<div class='fileContainer Recording'>";
-								HTML += "<div class='optionContainer'>";
-								HTML += "	<button class='button voice'></button>";
-								HTML += "	<p class='label'>Record</p>";
-								HTML += "</div></div>";
+								HTML += "<div class='fileContainer Recording' name='q"+data[0]+"' data-value=''>";
+								HTML += "	<div class='optionContainer'>";
+								HTML += "		<div id='record' class='button voice' name='q"+data[0]+"'></div>";
+								HTML += "		<p class='label'>Start recording</p>";
+								HTML += "	</div>";
+								HTML += "	<div class='optionContainer'>";
+								HTML += "		<div id='playRecord' class='button play' name='q"+data[0]+"'></div>";
+								HTML += "		<p class='label'>Play</p>";
+								HTML += "	</div>";
+								HTML += "</div>";
 							break;
 
 							case "Photo":
-								HTML += "<div class='fileContainer Image' name='q"+data[0]+"'><div class='optionContainer'>";
-								HTML += "	<div id='takePic' class='button camera' name='q"+data[0]+"'></div>";
-								HTML += "	<p class='label'>Camera</p>";
-								HTML += "</div>";
-								HTML += "<div class='optionContainer'>";
-								HTML += "	<div id='choosePic' class='button album'></div>";
-								HTML += "	<p>Album</p>";
-								HTML += "</div>";
+								HTML += "<div class='fileContainer Image' name='q"+data[0]+"'>";
+								HTML += "	<div class='optionContainer'>";
+								HTML += "		<div id='takePic' class='button camera' name='q"+data[0]+"'></div>";
+								HTML += "			<p class='label'>Camera</p>";
+								HTML += "	</div>";
+								HTML += "	<div class='optionContainer'>";
+								HTML += "		<div id='choosePic' class='button album' name='q"+data[0]+"'></div>";
+								HTML += "			<p>Album</p>";
+								HTML += "	</div>";
 
-								HTML += "<div class='preview'><div class='close'></div><img id='preview' /></div>";
+								HTML += "	<div class='preview'><div id='removePic' class='close' name='q"+data[0]+"'></div><img id='preview' src='' /></div>";
 								HTML += "</div>";
 							break;
 						}
@@ -146,13 +153,32 @@ var survey = new function() {
 
 				HTML = $$("#questions #header").html()+HTML+$$("#questions #footer").html();
 				$$("#questions").html(HTML);
-				
 				$$("#survey_submit").on('click', survey.send);
+				
+				/*Add camera functionalities*/
 				$$("#takePic").on('click',function(){
-					cameraManager.qID = $$(this).attr("name");
-					cameraManager.takePicture();
+					cameraManager.takePicture($$(this).attr("name"));
 				});
-				$$("#choosePic").on('click',cameraManager.choosePicture);
+				$$("#removePic").on('click',function(){
+					cameraManager.clearQuestion($$(this).attr("name"));
+				});
+				$$("#choosePic").on('click',function(){
+					cameraManager.choosePicture($$(this).attr("name"));
+				});
+
+				/*Add location functionalities*/
+				$$("#shareLoc").on('click',function(){
+					if($$("input",this).is(':checked')) $$("input",this).attr("value", "");
+					else geoLocationManager.getCurrentLocation($$("input",this).attr("name"));
+				});
+				
+				/*Add recording functionalities*/
+				$$("#record").on('click',function(){
+					microphoneManager.toggleRecording($$(this).attr("name"));
+				});
+				$$("#playRecord").on('click',function(){
+					microphoneManager.togglePlay($$(this).attr("name"));
+				});
 			},
 			error(xhr,status,error){
 				myApp.alert('error data');
@@ -199,10 +225,28 @@ var survey = new function() {
 						val += survey.uploadFile(q.name,"img");
 					}
 				break;
+				case "Recording":
+					audioURI = $$(".fileContainer[name='"+q.name+"']").attr("data-value");
+					if(audioURI !== "")
+					{
+						val += survey.uploadFile(q.name,"audio");
+					}
+				break;	
+				case "ShareLocation":
+					if($$("#questions #shareLoc input[name='"+q.name+"']:checked").length > 0)
+					{
+						val = $$("#questions #shareLoc input[name='"+q.name+"']:checked").val();
+					}
+					else
+					{
+						val = "Not agreed";
+					}
+				break;
 			}
 			
 			if(val === ""){ val = "Empty";}
-			string += "&"+q.name+"="+val.replace(" ","%20");
+			string += "&"+q.name+"="+encodeURIComponent(val);
+			
 		});
 		
 		return string;
@@ -216,18 +260,28 @@ var survey = new function() {
 		var options = new FileUploadOptions();
 		var path = "files/";
 		var filename = "";
+		var fileURI;
 		
 		switch(format)
 		{
 			case "img":
-				imageURI = $$(".fileContainer[name='"+qID+"'] #preview").attr("src");
-				
 				path+="images/";
 				filename = "image_" + survey.startdate.replace(/\s|:/g,"-") + "_" + Math.floor(Math.random()*10000) + ".jpg";
         		
+				fileURI = $$(".fileContainer[name='"+qID+"'] #preview").attr("src");
 				options.fileKey = "file";
-        		options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+        		options.fileName = fileURI.substr(fileURI.lastIndexOf('/') + 1);
         		options.mimeType = "image/jpeg";
+        		options.chunkedMode = false;
+			break;
+			case "audio":
+				path+="recordings/";
+				filename = "recording_" + survey.startdate.replace(/\s|:/g,"-") + "_" + Math.floor(Math.random()*10000) + AUD_EXTENSION;
+        		
+				fileURI = $$(".fileContainer[name='"+qID+"']").attr("data-value");
+				options.fileKey = "file";
+        		options.fileName = fileURI.substr(fileURI.lastIndexOf('/') + 1);
+        		options.mimeType = "audio/"+AUD_EXTENSION.substr(1, 3).toUpperCase();
         		options.chunkedMode = false;
 			break;
 		}
@@ -235,11 +289,10 @@ var survey = new function() {
 		var params = {};
         params.filename = filename;
 		options.params = params;
-
+		
 		var ft = new FileTransfer();
         ft.upload(
-			imageURI,
-			"http://surveyhti.nfshost.com/survey/saveFiles.php"+AUTORIZATION+"&format="+format, 
+			fileURI, "http://surveyhti.nfshost.com/survey/saveFiles.php"+AUTORIZATION+"&format="+format, 
 			function(result){
         		//alert('result : ' + JSON.stringify(result));
         	}, function(error){
@@ -248,10 +301,10 @@ var survey = new function() {
 		);
 		
 		return path+filename;
-
 	};
 	
 	this.send = function(){
+		microphoneManager.stopPlay();
 		$$.ajax({
 			url:WEB_BASE+"saveQuestions.php"+AUTORIZATION+survey.response()+survey.serialize(),
 			success: function(result){
@@ -277,8 +330,8 @@ var survey = new function() {
 	};
 };
 
-function sliderOutput(id)
+function sliderOutput(qID)
 {
-	$$("output[name='f"+id+"']").html($$("input[name='q"+id+"']").val());
+	$$("output[name='f"+qID+"']").html($$("input[name='q"+qID+"']").val());
 	
 }

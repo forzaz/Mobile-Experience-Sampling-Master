@@ -313,6 +313,13 @@ form *{
     display: inline-block;
 }
 
+.fileContainer .player .button{
+	height: 30px;
+	width: 30px;
+	float: left;
+	display: block;
+}
+
 .fileContainer .optionContainer .button:active{
    background-color: #2EE577;
 }

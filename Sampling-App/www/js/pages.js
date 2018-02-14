@@ -3,6 +3,7 @@ var myApp = new Framework7();
 var storage = window.localStorage;
 var $$ = Dom7;
 var view = myApp.addView('.view-main', {dynamicNavbar: true});
+var FS;
 
 //Create modules
 
@@ -18,6 +19,8 @@ $$(document).on('deviceready', function() {
 	{
 		view.router.loadPage('menu.html');
 	}
+	
+	init();
 });
 
 // Handle page events
@@ -30,5 +33,4 @@ myApp.onPageInit('survey', function (page) {
 	
 	survey.startdate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 	survey.retrieveQuestions();
-	myApp.alert('questions loaded');
 });

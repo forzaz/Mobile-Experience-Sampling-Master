@@ -1,3 +1,24 @@
+function scheduleNotifications(){
+	//https://www.npmjs.com/package/cordova-plugin-local-notification
+	cordova.plugins.notification.local.schedule([
+		{ id: 1, 
+			title: 'Fill out the morning survey!',
+			trigger: { every: { hour: 9 } }
+		},
+    	{ id: 2, 
+			title: 'Fill out the evening survey!',
+			trigger: { every: { hour: 22 } }
+		},
+		{ id:3,
+		 	title: 'notification'
+		}
+	]);
+}
+
+function onActivateNotification(notification) {
+	myApp.alert('clicked: ' + notification.id);
+}
+
 function renderQuestion(Qid){
 	var render = true;
 	var date = new Date();
@@ -77,4 +98,11 @@ function registerUser()
 			}
 		});
 	}
+}
+
+function init()
+{
+	microphoneManager.init();
+	scheduleNotifications();
+	cordova.plugins.notification.local.on('click', onActivateNotification, this);
 }

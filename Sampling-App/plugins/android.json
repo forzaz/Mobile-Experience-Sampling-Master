@@ -7,19 +7,10 @@
     "files": {}
   },
   "installed_plugins": {
-    "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
-    },
     "cordova-plugin-camera": {
       "PACKAGE_NAME": "com.tue.experience_sampling"
     },
-    "cordova-plugin-network-information": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
-    },
-    "cordova-plugin-geolocation": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
-    },
-    "cordova-plugin-media": {
+    "cordova-plugin-device": {
       "PACKAGE_NAME": "com.tue.experience_sampling"
     },
     "cordova-plugin-file": {
@@ -27,7 +18,26 @@
     },
     "cordova-plugin-file-transfer": {
       "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-geolocation": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-local-notification": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-media": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
     }
   },
-  "dependent_plugins": {}
+  "dependent_plugins": {
+    "cordova-plugin-badge": {
+      "PACKAGE_NAME": "com.tue.experience_sampling"
+    }
+  }
 }
