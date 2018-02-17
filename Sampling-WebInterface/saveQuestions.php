@@ -35,7 +35,7 @@ if(Autorize::check())
 		//save all questionaire data using multi-query method
 		$result = $db->multiQuery(Utilities::multiInsertBuilder('Answers',['Qid','Rid','Value'],$data));
 		
-		if($result === TRUE) 	echo 'success';
+		if($result === TRUE) 	echo 'success::'.$RID;
 		else 					echo 'failed';
 	}
 	else

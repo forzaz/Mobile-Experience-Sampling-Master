@@ -21,6 +21,10 @@ if(Autorize::check())
 			{
 				//correct username and password
 				echo "true::".$row['Uid'];
+				
+				//update token to the right device
+				$a_token = Utilities::stringFormat(Utilities::getAndSanitize('token'));
+				$db->query("UPDATE Users SET Token = {$a_token} WHERE Username = {$a_user}");
 			}
 			else
 			{

@@ -11,12 +11,12 @@ var microphoneManager = new function()
 	this.recording = false;
 	
 	this.init = function(){
-		AUD_EXTENSION = ".wav";
-		if(device.platform == "Android") AUD_EXTENSION = ".amr";
+												AUD_EXTENSION = ".wav";
+		if(device.platform === "Android") 		AUD_EXTENSION = ".amr";
 		
-		if(device.platform == "iOS") 			AUD_PATH = cordova.file.tempDirectory;
-		else if(device.platform == "Android") 	AUD_PATH = cordova.file.externalRootDirectory;
-	}
+		if(device.platform === "iOS") 			AUD_PATH = cordova.file.tempDirectory;
+		else if(device.platform === "Android") 	AUD_PATH = cordova.file.externalRootDirectory;
+	};
 	
 	this.toggleRecording = function(qID){
 		if(!microphoneManager.recording)
@@ -28,6 +28,7 @@ var microphoneManager = new function()
 			microphoneManager.getMedia("recording_"+qID+AUD_EXTENSION);
 			microphoneManager.mediaRec.startRecord();
 			$$(".fileContainer[name='"+qID+"'] #record + p.label").html("Stop recording");
+			$$(".fileContainer[name='"+microphoneManager.qID+"'] #record").css("background-color", "#2EE577");
 			microphoneManager.recording = true;
 		}
 		else
@@ -41,6 +42,8 @@ var microphoneManager = new function()
 				
 				$$(".fileContainer[name='"+microphoneManager.qID+"']").attr('data-value',AUD_PATH+microphoneManager.src);
 				$$(".fileContainer[name='"+microphoneManager.qID+"'] #record + p.label").html("New recording");
+				$$(".fileContainer[name='"+microphoneManager.qID+"'] #record").css("background-color", "#D8D8D8");
+				$$(".fileContainer[name='"+microphoneManager.qID+"'] #playRecord").css("opacity", "1");
 				
 				microphoneManager.qID = -1;
 				microphoneManager.src = "";
@@ -63,7 +66,7 @@ var microphoneManager = new function()
 			{
 				//if another sound is activated, we start it.
 				microphoneManager.qID = qID;
-				microphoneManager.startPlay("recording_"+qID+AUD_EXTENSION);
+				if($$(".fileContainer[name='"+qID+"']").attr('data-value') !== "") microphoneManager.startPlay("recording_"+qID+AUD_EXTENSION);
 				return;
 			}
 			microphoneManager.qID = -1;
@@ -76,6 +79,7 @@ var microphoneManager = new function()
 	
 	this.startPlay = function(src){
 		$$(".fileContainer[name='"+microphoneManager.qID+"'] #playRecord + p.label").html("Stop");
+		$$(".fileContainer[name='"+microphoneManager.qID+"'] #playRecord").toggleClass("play stop");
 		microphoneManager.getMedia(src);
 		microphoneManager.mediaRec.play();
 		microphoneManager.playing = true;
@@ -84,6 +88,7 @@ var microphoneManager = new function()
 	this.stopPlay = function(){
 		if(microphoneManager.playing){
 			$$(".fileContainer[name='"+microphoneManager.qID+"'] #playRecord + p.label").html("Play");
+			$$(".fileContainer[name='"+microphoneManager.qID+"'] #playRecord").toggleClass("play stop");
 			microphoneManager.mediaRec.stop();
 			microphoneManager.mediaRec.release();
 			microphoneManager.playing = false;

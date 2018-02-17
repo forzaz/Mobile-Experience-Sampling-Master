@@ -1,0 +1,11 @@
+android {
+  defaultConfig {
+    compileSdkVersion 26
+    targetSdkVersion 26
+  }
+
+   packagingOptions {
+     exclude 'README'
+     exclude 'LICENSE'
+   }
+}

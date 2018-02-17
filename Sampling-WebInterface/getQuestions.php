@@ -19,6 +19,8 @@ if(Autorize::check())
 			
 			$temp = $row["Labels"];
 			echo ($temp == "" ? '0' : $row["Labels"]);
+			
+			echo "::" . $row["Required"];
 			echo "<br/>";
 		}
 	}

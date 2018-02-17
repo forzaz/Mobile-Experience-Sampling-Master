@@ -12,8 +12,9 @@ if(Autorize::check())
 	//get filled in credentials
 	$a_user = Utilities::stringFormat(Utilities::getAndSanitize('appUser'));
 	$a_pass = Utilities::stringFormat(Utilities::getAndSanitize('appPass'));
+	$a_token = Utilities::stringFormat(Utilities::getAndSanitize('token'));
 	
-	$result = $db->query("INSERT INTO Users(Username,Password) VALUES (".$a_user.",".$a_pass.")");
+	$result = $db->query("INSERT INTO Users(Username,Password,Token) VALUES (".$a_user.",".$a_pass.",".$a_token.")");
 	
 	if($result === TRUE)
 	{

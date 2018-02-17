@@ -2,6 +2,10 @@
 highlight-color: #FFF66B;
 */
 
+*{
+	box-sizing:border-box;
+}
+
 /*----------styling-----------*/
 .statusbar-overlay {
     background: #000000;
@@ -40,6 +44,16 @@ highlight-color: #FFF66B;
 	padding: 0em 3em;
 }
 
+.initializer{
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	z-index: 5;
+}
+
 /*----------layout classes-----------*/
 .page-content p.center{
 	text-align: center;
@@ -52,11 +66,17 @@ a.button{
 	color: #fff;
 	width: auto;
 	height: auto;
-	min-width: 150px;
+	min-width: 200px;
 	display: inline-block;
 	font-size: 20px;
 	line-height: 40px;
 	padding: 8px 20px;
+}
+
+a.buttonLogin{
+	font-size: 15px;
+	padding: 4px 16px;
+	max-width: 160px;
 }
 
 /*----------text styles-----------*/
@@ -71,12 +91,43 @@ h2{
 	line-height: 38px;
 }
 
+/*-----------messages-------------*/
+.messageBlock{
+	width: 100%;
+	box-sizing:border-box;
+	max-width: 100%;
+	margin-bottom: 2em;
+	display: block;
+}
+
+.messageBlock p.time{
+	width: 100%;
+	color: #cdcdcd;
+	margin: 5px;
+	display: block;
+}
+
+.messageBlock p.content{
+	width: 100%;
+	background-color: #cdcdcd;
+	color: #fff;
+	padding: 1em;
+	border-radius: 20px;
+	border-top-left-radius: 0;
+	margin: 0;
+	display: block;
+}
+
 /*---------survey inputs---------*/
 form *{
 	box-sizing:border-box;
 	font-family: Arial;
 	color: #656565;
 
+}
+
+form .required{
+	border: 2px solid #f00;
 }
 
 .question{
@@ -189,6 +240,7 @@ form *{
 	display: inline-block;
 	padding-left: 0px;
 	width: 30px;
+	height: 40px;
 	text-align: center;
 }
 
@@ -313,13 +365,6 @@ form *{
     display: inline-block;
 }
 
-.fileContainer .player .button{
-	height: 30px;
-	width: 30px;
-	float: left;
-	display: block;
-}
-
 .fileContainer .optionContainer .button:active{
    background-color: #2EE577;
 }
@@ -335,6 +380,19 @@ form *{
 .fileContainer .optionContainer .button.voice{
     background-image: url('../img/microphone.png');
     background-size: 60px 60px;
+}
+.fileContainer .optionContainer .button.marker{
+    background-image: url('../img/map.png');
+    background-size: 30px 30px;
+}
+.fileContainer .optionContainer .button.play{
+    background-image: url('../img/play.png');
+    background-size: 25px 30px;
+	background-position: 20px;
+}
+.fileContainer .optionContainer .button.stop{
+    background-image: url('../img/stop.png');
+    background-size: 20px 20px;
 }
 
 .fileContainer .preview{
@@ -359,10 +417,60 @@ form *{
     background-color: red;
 }
 
+.fileContainer #location{
+	text-align: left;
+}
+
+#map{
+	position: sticky !important;
+	overflow: hidden;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+
+#map #closeMap{
+	position: absolute;
+	bottom: 1.5em;
+	width: 200px;
+	left: 50%;
+	margin-left: -100px;
+	background-color: #fff;
+	text-align: center;
+	padding: 1em;
+	border-radius: 10px;
+}
+
+#map #closeMap:active{
+	background-color: #2EE577;
+}
+
+.messageOverlay{
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.6);
+	top: 0;
+	left: 0;
+	text-align: center;
+	color: #fff;
+	display: none;
+}
+
+.messageOverlay span{
+	display: table-cell;
+	vertical-align: middle;
+}
+
 .button#survey_submit{
 	margin-bottom: 3em;
 	margin-top: 3em;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	height: auto;
+}
+
+.button#survey_submit:active{
+	background-color: #2EE577;
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; default-src *; connect-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
 
     <!-- Required meta tags-->
     <meta charset="utf-8">
@@ -34,10 +34,7 @@
 			
             <div class="navbar">
                 <div class="navbar-inner">
-					<div class="left">
-                        <a href="#" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
-                    </div>
-                    <div class="center">Survey</div>
+                    <div class="center">Login</div>
                 </div>
             </div>
 			
@@ -46,14 +43,18 @@
                     <div class="page-content">
 						
                         <div class="content-block full">
+							<div class="initializer"></div>
+							
                             <h2 style="margin-bottom: 15px; margin-top: 65px;">Welcome to</h2>
 							<h1 style="margin-top: 0;">Spaced<br/>Learner</h1>
-							<p class="center">
-								<br/><br/><br/>
-								Name: <input id="username" type="text" style="margin-bottom: 10px;" /><br/>
+							<p>
+								<br/><br/>
+								Username: <input id="username" type="text" style="margin-bottom: 10px;" /><br/>
 								Password: <input id="password" type="password" style="margin-bottom: 10px;" />
-								<br/>
-								<a id="login" class="button">Log In</a> <a href="register.html" class="button">Create User</a>
+							</p>
+							<p class="center">
+								<a id="login" class="button buttonLogin">Log In</a> <a href="register.html" class="button buttonLogin" style="margin-bottom: 10px;">Register</a><br/>
+								<a href="forgetpassword.html">Forget your password?</a>
 							</p>
                         </div>
 						

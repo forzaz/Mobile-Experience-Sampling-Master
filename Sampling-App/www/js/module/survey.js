@@ -3,6 +3,9 @@ var survey = new function() {
 	this.startdate = null;
 	
 	this.retrieveQuestions = function(){
+		$$(".messageOverlay span").html("Loading question, wait a moment...");
+		$$(".messageOverlay").css("display","table");
+		
 		$$.ajax({
 			url:WEB_BASE+"getQuestions.php"+AUTORIZATION,
 			success: function(result){
@@ -15,19 +18,22 @@ var survey = new function() {
 				questions.forEach(function(question) {
 					var data = question.split("::");
 					if(renderQuestion(data[0])){
-						HTML += "<p class='question'>"+data[1]+"</p>";
+						HTML += "<p class='question'>"+data[1];
+						if(data[4] === "1") HTML += " (required)";
+						HTML += "</p>";
 						qData.push({name:"q"+data[0],type:data[2]});
 						switch(data[2])
 						{
 							case "ShortText":
-								HTML += "<input class='SOQ' type='text' name='q"+data[0]+"' />";
+								HTML += "<input class='SOQ' type='text' name='q"+data[0]+"' data-required='"+data[4]+"'/>";
 							break;
 
 							case "LongText":
-								HTML += "<textarea class='LOQ' name='q"+data[0]+"'></textarea>";
+								HTML += "<textarea class='LOQ' name='q"+data[0]+"' data-required='"+data[4]+"'></textarea>";
 							break;
 
 							case "Select":
+								HTML += "<div class='selectContainer' name='q"+data[0]+"' data-required='"+data[4]+"'>";
 								labels = data[3].split(";");
 								labels.forEach(function(label) {
 									if(label.endsWith("-s"))
@@ -44,9 +50,11 @@ var survey = new function() {
 									HTML += "<span class='radiocheckmark'></span>";
 									HTML += "</label>";
 								});
+								HTML += "</div>";
 							break;
 
 							case "MultiSelect":
+								HTML += "<div class='selectContainer' name='q"+data[0]+"' data-required='"+data[4]+"'>";
 								labels = data[3].split(";");
 								labels.forEach(function(label) {
 									HTML += "<label class='checkContainer'>"+label;
@@ -54,6 +62,7 @@ var survey = new function() {
 									HTML += "<span class='checkmark'></span>";
 									HTML += "</label>";
 								});
+								HTML += "</div>";
 							break;
 
 							case "Likert":
@@ -62,14 +71,14 @@ var survey = new function() {
 								{
 									switch(data[3])
 									{
-										case "5": labels = ["1","2","3-s","4","5"]; break;
-										case "7": labels = ["1","2","3","4-s","5","6","7"]; break;
-										case "9": labels = ["1","2","3","4","5-s","6","7","8","9"]; break;
+										case "5": labels = ["1","2","3","4","5"]; break;
+										case "7": labels = ["1","2","3","4","5","6","7"]; break;
+										case "9": labels = ["1","2","3","4","5","6","7","8","9"]; break;
 									}
 								}
 								else labels = data[3].split(";");
 								
-								HTML += "<div class='likert'>";
+								HTML += "<div class='selectContainer likert' name='q"+data[0]+"' data-required='"+data[4]+"'>";
 								labels.forEach(function(label) {
 									if(label.endsWith("-s"))
 									{
@@ -97,15 +106,25 @@ var survey = new function() {
 							break;
 
 							case "Date":
-								HTML += "<input class='dateQ' type='date' name='q"+data[0]+"' />";
+								type = data[3];
+								if(type !== "text"){
+									HTML += "<input class='dateQ' type='date' name='q"+data[0]+"' data-required='"+data[4]+"' />";
+								} else {
+									HTML += "<input class='dateQ' type='text' name='q"+data[0]+"' data-required='"+data[4]+"' />";
+								}
 							break;
 
 							case "Time":
-								HTML += "<input class='timeQ' type='time' name='q"+data[0]+"' />";
+								type = data[3];
+								if(type !== "text"){
+									HTML += "<input class='timeQ' type='time' name='q"+data[0]+"' data-required='"+data[4]+"' />";
+								} else {
+									HTML += "<input class='timeQ' type='text' name='q"+data[0]+"' data-required='"+data[4]+"' />";
+								}
 							break;
 
 							case "Dropdown":
-								HTML += "<select class='dropQ' name='q"+data[0]+"'>";
+								HTML += "<select class='dropQ' name='q"+data[0]+"' data-required='"+data[4]+"' >";
 								labels = data[3].split(";");
 								labels.forEach(function(label) {
 									HTML += "<option value='"+label+"'>"+label+"</option>";
@@ -114,27 +133,39 @@ var survey = new function() {
 							break;
 
 							case "ShareLocation":
+								HTML += "<div class='selectContainer' name='q"+data[0]+"' data-required='"+data[4]+"'>";
 								HTML += "<label id='shareLoc' class='checkContainer'>I accept to share my current location";
 								HTML += "<input type='checkbox' name='q"+data[0]+"' id='accept' value='' />";
 								HTML += "<span class='checkmark'></span>";
 								HTML += "</label>";
+								HTML += "</div>"
+							break;
+								
+							case "ChooseLocation":
+								HTML += "<div class='fileContainer Location' name='q"+data[0]+"' data-value='' data-required='"+data[4]+"'>";
+								HTML += "	<p id='location'>No location selected</p>";
+								HTML += "	<div class='optionContainer'>";
+								HTML += "		<div id='openMap' class='button marker' name='q"+data[0]+"'></div>";
+								HTML += "		<p class='label'>Choose a location</p>";
+								HTML += "	</div>";
+								HTML += "</div>";
 							break;
 
 							case "Recording":
-								HTML += "<div class='fileContainer Recording' name='q"+data[0]+"' data-value=''>";
+								HTML += "<div class='fileContainer Recording' name='q"+data[0]+"' data-value='' data-required='"+data[4]+"'>";
 								HTML += "	<div class='optionContainer'>";
 								HTML += "		<div id='record' class='button voice' name='q"+data[0]+"'></div>";
 								HTML += "		<p class='label'>Start recording</p>";
 								HTML += "	</div>";
 								HTML += "	<div class='optionContainer'>";
-								HTML += "		<div id='playRecord' class='button play' name='q"+data[0]+"'></div>";
+								HTML += "		<div id='playRecord' class='button play' name='q"+data[0]+"' style='opacity: 0.6;'></div>";
 								HTML += "		<p class='label'>Play</p>";
 								HTML += "	</div>";
 								HTML += "</div>";
 							break;
 
 							case "Photo":
-								HTML += "<div class='fileContainer Image' name='q"+data[0]+"'>";
+								HTML += "<div class='fileContainer Image' name='q"+data[0]+"' data-required='"+data[4]+"'>";
 								HTML += "	<div class='optionContainer'>";
 								HTML += "		<div id='takePic' class='button camera' name='q"+data[0]+"'></div>";
 								HTML += "			<p class='label'>Camera</p>";
@@ -167,10 +198,16 @@ var survey = new function() {
 				});
 
 				/*Add location functionalities*/
+				HTML = "<div id='map' class='preview'><div id='closeMap'>Set location</div></div>";
+				$$(".page[data-page='survey'] .page-content").append(HTML);
 				$$("#shareLoc").on('click',function(){
 					if($$("input",this).is(':checked')) $$("input",this).attr("value", "");
 					else geoLocationManager.getCurrentLocation($$("input",this).attr("name"));
 				});
+				$$("#openMap").on('click',function(){
+					geoLocationManager.openMapsWindow($$(this).attr("name"));
+				});
+				$$("#closeMap").on('click',geoLocationManager.closeMapsWindow);
 				
 				/*Add recording functionalities*/
 				$$("#record").on('click',function(){
@@ -179,6 +216,8 @@ var survey = new function() {
 				$$("#playRecord").on('click',function(){
 					microphoneManager.togglePlay($$(this).attr("name"));
 				});
+				
+				$$(".messageOverlay").css("display","none");
 			},
 			error(xhr,status,error){
 				myApp.alert('error data');
@@ -189,6 +228,7 @@ var survey = new function() {
 	
 	this.serialize = function(){
 		var string = "";
+		var returnFalse = false;
 		qData.forEach(function(q){
 			var val = "";
 			switch(q.type)
@@ -199,47 +239,91 @@ var survey = new function() {
 				case "Date":
 				case "Time":
 				case "Slider":
+					$$("#questions [name='"+q.name+"']").removeClass("required");
 					val = $$("#questions [name='"+q.name+"']").val();
+					if(val === "" && $$("#questions [name='"+q.name+"']").attr("data-required") === "1")
+					{
+						$$("#questions [name='"+q.name+"']").addClass("required");
+						returnFalse = true;
+					}
 				break;
 				case "Select":
 				case "Likert":
-					if($$("#questions [name='"+q.name+"']:checked").length > 0)
+					$$("#questions .selectContainer[name='"+q.name+"']").removeClass("required");
+					if($$("#questions input[name='"+q.name+"']:checked").length > 0)
 					{
-						val = $$("#questions [name='"+q.name+"']:checked").val();
+						val = $$("#questions input[name='"+q.name+"']:checked").val();
+					}
+					else if($$("#questions .selectContainer[name='"+q.name+"']").attr("data-required") === "1")
+					{
+						$$("#questions .selectContainer[name='"+q.name+"']").addClass("required");
+						returnFalse = true;
 					}
 				break;
 				case "MultiSelect":
-					if($$("#questions [name='"+q.name+"']:checked").length > 0)
+					if($$("#questions input[name='"+q.name+"']:checked").length > 0)
 					{
-						//myApp.alert($$("#questions [name='"+q.name+"']:checked").length);
-						$$("#questions [name='"+q.name+"']:checked").each(function(key){
+						$$("#questions .selectContainer[name='"+q.name+"']").removeClass("required");
+						$$("#questions input[name='"+q.name+"']:checked").each(function(key){
 							if(key > 0) val += ",%20";
 							val += $$(this).val();
 						});
+					}
+					else if($$("#questions .selectContainer[name='"+q.name+"']").attr("data-required") === "1")
+					{
+						$$("#questions .selectContainer[name='"+q.name+"']").addClass("required");
+						returnFalse = true;
 					}
 				break;
 				case "Photo":
 					imageURI = $$(".fileContainer[name='"+q.name+"'] #preview").attr("src");
 					if(imageURI !== "")
 					{
+						$$(".fileContainer[name='"+q.name+"']").removeClass("required");
 						val += survey.uploadFile(q.name,"img");
+					}
+					else if($$(".fileContainer[name='"+q.name+"']").attr("data-required") === "1")
+					{
+						$$(".fileContainer[name='"+q.name+"']").addClass("required");
+						returnFalse = true;
 					}
 				break;
 				case "Recording":
 					audioURI = $$(".fileContainer[name='"+q.name+"']").attr("data-value");
 					if(audioURI !== "")
 					{
+						$$(".fileContainer[name='"+q.name+"']").removeClass("required");
 						val += survey.uploadFile(q.name,"audio");
+					}
+					else if($$(".fileContainer[name='"+q.name+"']").attr("data-required") === "1")
+					{
+						$$(".fileContainer[name='"+q.name+"']").addClass("required");
+						returnFalse = true;
 					}
 				break;	
 				case "ShareLocation":
 					if($$("#questions #shareLoc input[name='"+q.name+"']:checked").length > 0)
 					{
+						$$("#questions .selectContainer[name='"+q.name+"']").removeClass("required");
 						val = $$("#questions #shareLoc input[name='"+q.name+"']:checked").val();
 					}
 					else
 					{
+						if($$("#questions .selectContainer[name='"+q.name+"']").attr("data-required") === "1")
+						{
+							$$("#questions .selectContainer[name='"+q.name+"']").addClass("required");
+							returnFalse = true;
+						}
 						val = "Not agreed";
+					}
+				break;
+				case "ChooseLocation":
+					$$(".fileContainer[name='"+q.name+"']").removeClass("required");
+					val = $$(".fileContainer[name='"+q.name+"']").attr("data-value");
+					if(val === "" && $$(".fileContainer[name='"+q.name+"']").attr("data-required") === "1")
+					{
+						$$(".fileContainer[name='"+q.name+"']").addClass("required");
+						returnFalse = true;
 					}
 				break;
 			}
@@ -249,6 +333,7 @@ var survey = new function() {
 			
 		});
 		
+		if(returnFalse) return false;
 		return string;
 	};
 	
@@ -304,34 +389,50 @@ var survey = new function() {
 	};
 	
 	this.send = function(){
-		microphoneManager.stopPlay();
-		$$.ajax({
-			url:WEB_BASE+"saveQuestions.php"+AUTORIZATION+survey.response()+survey.serialize(),
-			success: function(result){
-				var data = result.split("::");
-				
-				if(data[0] === "success")
-				{
-					myApp.alert("Your response is saved, thank you!");
-					view.router.loadPage('menu.html');
-				}
-				else
-				{
-					myApp.alert('Something went wrong, your response is not saved');
-				}
-				
-			},
-			error(xhr,status,error){
-				
-				myApp.alert('Something went wrong, your response is not saved');
-				//$$("#questions").html(status + " " + error);
+		if(navigator.connection.type !== Connection.NONE)
+		{
+			microphoneManager.stopPlay();
+			$$(".messageOverlay span").html("Sending response...");
+			$$(".messageOverlay").css("display","table");
+			
+			var serialize = survey.serialize();
+			if(serialize){
+				$$.ajax({
+					url:WEB_BASE+"saveQuestions.php"+AUTORIZATION+survey.response()+serialize,
+					success: function(result){
+						var data = result.split("::");
+
+						if(data[0] === "success")
+						{
+							$$(".messageOverlay").css("display","none");
+							myApp.alert("Your response is saved.","Thank you!");
+							view.router.loadPage('menu.html');
+						}
+						else
+						{
+							$$(".messageOverlay").css("display","none");
+							myApp.alert('Your response is not saved, please try again','Something went wrong');
+						}
+
+					},
+					error(xhr,status,error){
+						$$(".messageOverlay").css("display","none");
+						myApp.alert('Your response is not saved, please try again','Something went wrong');
+						//$$("#questions").html(status + " " + error);
+					}
+				});
+			} else {
+				$$(".messageOverlay").css("display","none");
+				myApp.alert("Pleae make sure you answer all the required questions (indicated in red).","Not all questions are answered");
 			}
-		});
+		} else {
+			$$(".messageOverlay").css("display","none");
+			myApp.alert("Please, make sure you have an internet connection to submit the survey.","No internet connection");
+		}
 	};
 };
 
 function sliderOutput(qID)
 {
 	$$("output[name='f"+qID+"']").html($$("input[name='q"+qID+"']").val());
-	
 }

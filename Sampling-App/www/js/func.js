@@ -8,15 +8,8 @@ function scheduleNotifications(){
     	{ id: 2, 
 			title: 'Fill out the evening survey!',
 			trigger: { every: { hour: 22 } }
-		},
-		{ id:3,
-		 	title: 'notification'
 		}
 	]);
-}
-
-function onActivateNotification(notification) {
-	myApp.alert('clicked: ' + notification.id);
 }
 
 function renderQuestion(Qid){
@@ -36,35 +29,28 @@ function renderQuestion(Qid){
 
 function autorizeUser()
 {
-	myApp.alert("check credentials");
-	user = $$("input#username").val();
-	pass = $$("input#password").val();
-	myApp.alert(WEB_BASE+"getUser.php"+AUTORIZATION);
-	$$.ajax({
-		url:WEB_BASE+"getUser.php"+AUTORIZATION+"&appUser="+user+"&appPass="+pass,
-		success: function(result){
-			var data = result.split("::");
-			if(data[0]==="true")
-			{
-				myApp.alert("login correct");
-				storage.setItem("Uid",data[1]);
-				storage.setItem("login","true");
-				view.router.loadPage('menu.html');
+	window.FirebasePlugin.getToken(function(token) {
+		user = $$("input#username").val();
+		pass = $$("input#password").val();
+		$$.ajax({
+			url:WEB_BASE+"getUser.php"+AUTORIZATION+"&appUser="+user+"&appPass="+pass+"&token="+token,
+			success: function(result){
+				var data = result.split("::");
+				if(data[0]==="true")
+				{
+					storage.setItem("Uid",data[1]);
+					storage.setItem("login","true");
+					view.router.loadPage('menu.html');
+				}
+				else
+				{
+					myApp.alert("Please try again.","Wrong username and/or password");
+				}
+			},
+			error(xhr,status,error){
+				myApp.alert("Please make sure you have an internet connection to register an account.","No internet connection");
 			}
-			else
-			{
-				myApp.alert("login failed");
-			}
-		},
-		error(xhr,status,error){
-			myApp.alert("readyState: " + xhr.readyState);
-        	myApp.alert("responseText: "+ xhr.responseText);
-        	myApp.alert("status: " + xhr.status);
-        	myApp.alert("text status: " + status);
-        	myApp.alert("error: " + error);
-
-			//$$("#questions").html(status + " " + error);
-		}
+		});
 	});
 }
 
@@ -76,33 +62,69 @@ function registerUser()
 	
 	if(user && pass && r_pass && pass === r_pass)
 	{
-		$$.ajax({
-			url:WEB_BASE+"createUser.php"+AUTORIZATION+"&appUser="+user+"&appPass="+pass,
-			success: function(result){
-				var data = result.split("::");
-				if(data[0]==="true")
-				{
-					storage.setItem("Uid",data[1]);
-					storage.setItem("login","true");
-					view.router.loadPage('menu.html');
-					myApp.alert("Registration correct");
+		window.FirebasePlugin.getToken(function(token) {
+			
+			user = $$("input#r_username").val();
+			pass = $$("input#r_password").val();
+			
+			$$.ajax({
+				url:WEB_BASE+"createUser.php"+AUTORIZATION+"&appUser="+user+"&appPass="+pass+"&token="+token,
+				success: function(result){
+					var data = result.split("::");
+					if(data[0]==="true")
+					{
+						storage.setItem("Uid",data[1]);
+						storage.setItem("login","true");
+						view.router.loadPage('menu.html');
+						myApp.alert("Registration correct");
+					}
+					else
+					{
+						myApp.alert("Username already exists, please choose another one.","Cannot create user");
+					}
+				},
+				error(xhr,status,error){
+					myApp.alert("Please make sure you have an internet connection to register an account.","No internet connection");
 				}
-				else
-				{
-					myApp.alert("Username already exists, please choose another one.");
-				}
-			},
-			error(xhr,status,error){
-				myApp.alert('error data');
-				$$("#questions").html(status + " " + error);
-			}
+			});
+
+		}, function(error) {
+			myApp.alert("Please make sure you have an internet connection to register an account.","No internet connection");
 		});
 	}
 }
 
 function init()
 {
+	window.FirebasePlugin.subscribe("Announcement");
+	
+	window.FirebasePlugin.onNotificationOpen(function(notification) {	
+		var n = storage.getItem("messages");
+		var date;
+		var body;
+		if(notification.tap){
+			date = new Date(notification["google.sent_time"]);
+			body = notification.content;
+		}
+		else{
+			date = new Date();
+			body = notification.body;
+		} 
+		
+		var dateString = date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate()+" "+date.getHours()+":"+date.getMinutes();
+		alert(dateString+"::"+body);
+		storage.setItem("message"+n, dateString+"::"+body);
+		storage.setItem("messages", Number(n)+1);
+		
+	}, function(error) {
+		console.error(error);
+	});
+	
 	microphoneManager.init();
 	scheduleNotifications();
 	cordova.plugins.notification.local.on('click', onActivateNotification, this);
+}
+
+function onActivateNotification(notification) {
+	//myApp.alert('clicked: ' + notification.id);
 }

@@ -8,36 +8,45 @@
   },
   "installed_plugins": {
     "cordova-plugin-camera": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
+      "PACKAGE_NAME": "com.tue.experienceSampling"
     },
     "cordova-plugin-device": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
+      "PACKAGE_NAME": "com.tue.experienceSampling"
     },
     "cordova-plugin-file": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
+      "PACKAGE_NAME": "com.tue.experienceSampling"
     },
     "cordova-plugin-file-transfer": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
+      "PACKAGE_NAME": "com.tue.experienceSampling"
+    },
+    "cordova-plugin-firebase": {
+      "PACKAGE_NAME": "com.tue.experienceSampling"
     },
     "cordova-plugin-geolocation": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
+      "PACKAGE_NAME": "com.tue.experienceSampling"
+    },
+    "cordova-plugin-googlemaps": {
+      "API_KEY_FOR_ANDROID": "AIzaSyBCoxUsEwA-YqKTVzSKUA0DDg8iWLSUzKY",
+      "PLAY_SERVICES_VERSION": "11.8.0",
+      "ANDROID_SUPPORT_V4_VERSION": "24.1.0",
+      "PACKAGE_NAME": "com.tue.experienceSampling"
     },
     "cordova-plugin-local-notification": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
+      "PACKAGE_NAME": "com.tue.experienceSampling"
     },
     "cordova-plugin-media": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
+      "PACKAGE_NAME": "com.tue.experienceSampling"
     },
     "cordova-plugin-network-information": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
+      "PACKAGE_NAME": "com.tue.experienceSampling"
     },
     "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
+      "PACKAGE_NAME": "com.tue.experienceSampling"
     }
   },
   "dependent_plugins": {
     "cordova-plugin-badge": {
-      "PACKAGE_NAME": "com.tue.experience_sampling"
+      "PACKAGE_NAME": "com.tue.experienceSampling"
     }
   }
 }
