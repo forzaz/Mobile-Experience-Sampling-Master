@@ -1,3 +1,17 @@
+/**
+ * Camera module
+ * This module handles the camera input type, allowing users to make a picture
+ * with the camera or choose one from their album.
+ * 
+ * This module is developed by BOSONIC.design in assignment of the department 
+ * of Human-Technology Interaction @ Eindhoven, University of Technology.
+ * 
+ * info@bosonic.design || http://www.bosonic.design/
+ * hti@tue.nl || https://www.tue.nl/en/university/departments/industrial-engineering-innovation-sciences/research/research-groups/human-technology-interaction/
+ * 
+ * Released on: March, 2018 in Experience Sampling App 1.0.0
+ */
+
 //MODULE CONFIG
 const PIC_QUALITY 	= 50;	// Some common settings are 20, 50, and 100
 const PIC_WIDTH 	= 200;	//Width of the picture saved on the server

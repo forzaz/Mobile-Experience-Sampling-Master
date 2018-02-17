@@ -1,3 +1,16 @@
+/**
+ * Main app functions
+ * This file lists common function that one might want to change to customize the app.
+ * 
+ * This module is developed by BOSONIC.design in assignment of the department 
+ * of Human-Technology Interaction @ Eindhoven, University of Technology.
+ * 
+ * info@bosonic.design || http://www.bosonic.design/
+ * hti@tue.nl || https://www.tue.nl/en/university/departments/industrial-engineering-innovation-sciences/research/research-groups/human-technology-interaction/
+ * 
+ * Released on: March, 2018 in Experience Sampling App 1.0.0
+ */
+
 function scheduleNotifications(){
 	//https://www.npmjs.com/package/cordova-plugin-local-notification
 	cordova.plugins.notification.local.schedule([

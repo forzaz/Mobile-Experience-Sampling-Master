@@ -1,3 +1,17 @@
+/**
+ * Microphone module
+ * This module allows users to record audio and play it back.
+ * 
+ * This module is developed by BOSONIC.design in assignment of the department 
+ * of Human-Technology Interaction @ Eindhoven, University of Technology.
+ * 
+ * info@bosonic.design || http://www.bosonic.design/
+ * hti@tue.nl || https://www.tue.nl/en/university/departments/industrial-engineering-innovation-sciences/research/research-groups/human-technology-interaction/
+ * 
+ * Released on: March, 2018 in Experience Sampling App 1.0.0
+ */
+
+
 var AUD_EXTENSION;
 var AUD_PATH;
 
