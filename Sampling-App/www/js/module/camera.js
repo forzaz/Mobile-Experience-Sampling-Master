@@ -12,11 +12,6 @@
  * Released on: March, 2018 in Experience Sampling App 1.0.0
  */
 
-//MODULE CONFIG
-const PIC_QUALITY 	= 50;	// Some common settings are 20, 50, and 100
-const PIC_WIDTH 	= 200;	//Width of the picture saved on the server
-const PIC_HEIGHT 	= 200;	// Height of the picture saved on the server
-
 var cameraManager = new function()
 {
 	this.qID = -1;

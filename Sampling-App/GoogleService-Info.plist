@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>230019347613-b1ft1fbp5dvcvhik9l7uqgfq1un5sfi2.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.230019347613-b1ft1fbp5dvcvhik9l7uqgfq1un5sfi2</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDKhvaD-e0Xo3SCGinCATfcQtA1nw01J4c</string>
+	<key>GCM_SENDER_ID</key>
+	<string>230019347613</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.tue.experienceSampling</string>
+	<key>PROJECT_ID</key>
+	<string>experience-sampling-6528b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>experience-sampling-6528b.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:230019347613:ios:b9d89a38bf2c1b8e</string>
+	<key>DATABASE_URL</key>
+	<string>https://experience-sampling-6528b.firebaseio.com</string>
+</dict>
+</plist>

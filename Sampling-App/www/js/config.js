@@ -11,7 +11,22 @@
  * Released on: March, 2018
  */
 
-const USER_NAME = 'Marc';
-const PASSWORD = 'test123';
-const WEB_BASE = 'http://surveyhti.nfshost.com/survey/';
-const AUTORIZATION = "?user="+USER_NAME+"&pass="+PASSWORD;
+//KEEP THIS INFORMATION PRIVATE--------------------------------------------
+
+//Provide login details for the webinterface that is connected to the server.
+//This allows the app to retrieve information.
+const USER_NAME 	= 'Marc'; 		//server interface username
+const PASSWORD 		= 'test123'; 	//server interface password
+const WEB_BASE 		= 'http://surveyhti.nfshost.com/survey/'; 	//link to where the server interface is located
+const AUTORIZATION 	= "?user="+USER_NAME+"&pass="+PASSWORD; 	//<-- no need to change
+
+//CAMERA MODULE CONFIG
+//Define the quality of the pictures that need to be saved on the server.
+const PIC_QUALITY 	= 50;	// Some common settings are 20, 50, and 100
+const PIC_WIDTH 	= 200;	// Width of the picture saved on the server
+const PIC_HEIGHT 	= 200;	// Height of the picture saved on the server
+
+//GEOLOCATION MODULE CONFIG
+//Specify latitude and longitude of the maps initialization when the users GPS is turned off.
+const STANDARD_LAT = 51.44164199999999; //Current cordinates are set on Eindhoven, the Netherlands.
+const STANDARD_LNG = 5.469722499999989;

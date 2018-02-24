@@ -59,8 +59,8 @@ var geoLocationManager = new function()
 			geoLocationManager.qID = -1;
 		} else {
 			//cannot locate current user, set it on Eindhoven
-			geoLocationManager.currentLat = 51.44164199999999;
-			geoLocationManager.currentLng = 5.469722499999989;
+			geoLocationManager.currentLat = STANDARD_LAT;
+			geoLocationManager.currentLng = STANDARD_LNG;
 			geoLocationManager.initMap();
 		}
 		

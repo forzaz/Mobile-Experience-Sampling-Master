@@ -11,30 +11,45 @@
  * Released on: March, 2018
  */
 
+//this variable stores question ID and type.
 var qData = [];
 var survey = new function() {
+	
+	//Set timestamp for when the questionaire was started
 	this.startdate = null;
 	
+	/*
+		This function will retrieve the set questions on the server and render them accordingly to HTML.
+	*/
 	this.retrieveQuestions = function(){
+		
+		//create loading screen
 		$$(".messageOverlay span").html("Loading question, wait a moment...");
 		$$(".messageOverlay").css("display","table");
 		
+		//get questions
 		$$.ajax({
 			url:WEB_BASE+"getQuestions.php"+AUTORIZATION,
 			success: function(result){
 				var HTML = '';
 				var labels;
-				var questions = result.split("<br/>");
-
-				questions.pop();
 				
+				//get parameters for the questions and loop over them.
+				var questions = result.split("<br/>");
+				questions.pop();
 				questions.forEach(function(question) {
-					var data = question.split("::");
+					var data = question.split("::");//get parameters; 0 = qID, 1 = question string, 2 = question type, 3 = labels, 4 = required boolean.
+					
+					//check if question has to be rendered
 					if(renderQuestion(data[0])){
+						qData.push({name:"q"+data[0],type:data[2]});
+						
+						//render question
 						HTML += "<p class='question'>"+data[1];
 						if(data[4] === "1") HTML += " (required)";
 						HTML += "</p>";
-						qData.push({name:"q"+data[0],type:data[2]});
+						
+						//render input
 						switch(data[2])
 						{
 							case "ShortText":
@@ -194,7 +209,8 @@ var survey = new function() {
 						}
 					}
 				});
-
+				
+				//add survey to the screen
 				HTML = $$("#questions #header").html()+HTML+$$("#questions #footer").html();
 				$$("#questions").html(HTML);
 				$$("#survey_submit").on('click', survey.send);
@@ -230,6 +246,7 @@ var survey = new function() {
 					microphoneManager.togglePlay($$(this).attr("name"));
 				});
 				
+				//clear loading screen
 				$$(".messageOverlay").css("display","none");
 			},
 			error(xhr,status,error){
@@ -239,9 +256,17 @@ var survey = new function() {
 		}); 
 	};
 	
+	/*
+		Goes through all the questions and prepares a qID-value string to be send to the server.
+		- @return string = returns a complete string with qID-value pairs ready for ajax.
+		- @return false = if a required question is not filled in.
+	*/
 	this.serialize = function(){
 		var string = "";
 		var returnFalse = false;
+		
+		//loop through all questions and retrieve their values
+		//if a question does not have an answer, but is required, returnFalse will be true.
 		qData.forEach(function(q){
 			var val = "";
 			switch(q.type)
@@ -341,7 +366,9 @@ var survey = new function() {
 				break;
 			}
 			
-			if(val === ""){ val = "Empty";}
+			if(val === ""){ val = "Empty";}//No answer found, set to Empty
+			
+			//prepare value for sending with AJAX
 			string += "&"+q.name+"="+encodeURIComponent(val);
 			
 		});
@@ -350,10 +377,20 @@ var survey = new function() {
 		return string;
 	};
 	
+	/*
+		Prepares meta information of the response to be send to the server
+		- @return string = string including User ID and start date
+	*/
 	this.response = function(){
 		return "&UID="+storage.getItem("Uid")+"&sd="+this.startdate.replace(" ","%20");
 	};
 	
+	/*
+		Uploads files (images, recordings) to the server, seperate from the questionaire awnsers.
+		!-NOTE that errors in this function are not catched, and do not influence sending the rest of the information to the server.
+		- @var qID = question ID for question specified in database
+		- @var format = either "img" or "audio" for image or audio upload respectively
+	*/
 	this.uploadFile = function(qID,format){
 		var options = new FileUploadOptions();
 		var path = "files/";
@@ -363,6 +400,7 @@ var survey = new function() {
 		switch(format)
 		{
 			case "img":
+				//set parameters for sending image file
 				path+="images/";
 				filename = "image_" + survey.startdate.replace(/\s|:/g,"-") + "_" + Math.floor(Math.random()*10000) + ".jpg";
         		
@@ -373,6 +411,7 @@ var survey = new function() {
         		options.chunkedMode = false;
 			break;
 			case "audio":
+				//set parameters for sending audio file
 				path+="recordings/";
 				filename = "recording_" + survey.startdate.replace(/\s|:/g,"-") + "_" + Math.floor(Math.random()*10000) + AUD_EXTENSION;
         		
@@ -384,13 +423,15 @@ var survey = new function() {
 			break;
 		}
 		
+		//set file name, to read on server side
 		var params = {};
         params.filename = filename;
 		options.params = params;
 		
+		//send the file
 		var ft = new FileTransfer();
         ft.upload(
-			fileURI, "http://surveyhti.nfshost.com/survey/saveFiles.php"+AUTORIZATION+"&format="+format, 
+			fileURI, WEB_BASE+"saveFiles.php"+AUTORIZATION+"&format="+format, 
 			function(result){
         		//alert('result : ' + JSON.stringify(result));
         	}, function(error){
@@ -401,15 +442,24 @@ var survey = new function() {
 		return path+filename;
 	};
 	
+	/*
+		Uploads questionaire values to the server for saving the response.
+	*/
 	this.send = function(){
+		//check if there is a connection
 		if(navigator.connection.type !== Connection.NONE)
 		{
+			//stop media.
 			microphoneManager.stopPlay();
+			
+			//create loading overlay
 			$$(".messageOverlay span").html("Sending response...");
 			$$(".messageOverlay").css("display","table");
 			
+			//serialize (get values and make it a string) of the questions.
 			var serialize = survey.serialize();
 			if(serialize){
+				//questionaire is complete, send to server
 				$$.ajax({
 					url:WEB_BASE+"saveQuestions.php"+AUTORIZATION+survey.response()+serialize,
 					success: function(result){
@@ -417,28 +467,32 @@ var survey = new function() {
 
 						if(data[0] === "success")
 						{
+							//everything went well, send user back to the menu page
 							$$(".messageOverlay").css("display","none");
 							myApp.alert("Your response is saved.","Thank you!");
 							view.router.loadPage('menu.html');
 						}
 						else
 						{
+							//there is something wrong with the input - unkown error
 							$$(".messageOverlay").css("display","none");
-							myApp.alert('Your response is not saved, please try again','Something went wrong');
+							myApp.alert('Your response is not saved, please try again','Unkown error');
 						}
 
 					},
 					error(xhr,status,error){
+						//server not responding
 						$$(".messageOverlay").css("display","none");
-						myApp.alert('Your response is not saved, please try again','Something went wrong');
-						//$$("#questions").html(status + " " + error);
+						myApp.alert('Your response is not saved, please try again','Server is not responding');
 					}
 				});
 			} else {
+				//a required question is not answered
 				$$(".messageOverlay").css("display","none");
 				myApp.alert("Pleae make sure you answer all the required questions (indicated in red).","Not all questions are answered");
 			}
 		} else {
+			//there is no internet
 			$$(".messageOverlay").css("display","none");
 			myApp.alert("Please, make sure you have an internet connection to submit the survey.","No internet connection");
 		}

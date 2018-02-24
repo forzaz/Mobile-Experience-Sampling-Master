@@ -11,7 +11,6 @@
  * Released on: March, 2018 in Experience Sampling App 1.0.0
  */
 
-
 var AUD_EXTENSION;
 var AUD_PATH;
 
@@ -42,7 +41,7 @@ var microphoneManager = new function()
 			microphoneManager.getMedia("recording_"+qID+AUD_EXTENSION);
 			microphoneManager.mediaRec.startRecord();
 			$$(".fileContainer[name='"+qID+"'] #record + p.label").html("Stop recording");
-			$$(".fileContainer[name='"+microphoneManager.qID+"'] #record").css("background-color", "#2EE577");
+			$$(".fileContainer[name='"+qID+"'] #record").css("background-color", "#2EE577");
 			microphoneManager.recording = true;
 		}
 		else
