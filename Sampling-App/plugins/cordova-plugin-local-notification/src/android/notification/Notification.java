@@ -33,6 +33,7 @@ import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.util.ArraySet;
 import android.support.v4.util.Pair;
+import android.util.Log;
 import android.util.SparseArray;
 
 import org.json.JSONException;
@@ -49,6 +50,7 @@ import static android.app.AlarmManager.RTC_WAKEUP;
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.M;
+import static android.support.v4.app.NotificationCompat.PRIORITY_HIGH;
 import static android.support.v4.app.NotificationManagerCompat.IMPORTANCE_MAX;
 import static android.support.v4.app.NotificationManagerCompat.IMPORTANCE_MIN;
 
@@ -115,29 +117,36 @@ public final class Notification {
     /**
      * Get application context.
      */
-    public Context getContext () {
+    public Context getContext() {
         return context;
     }
 
     /**
      * Get notification options.
      */
-    public Options getOptions () {
+    public Options getOptions() {
         return options;
     }
 
     /**
      * Get notification ID.
      */
-    public int getId () {
+    public int getId() {
         return options.getId();
     }
 
     /**
      * If it's a repeating notification.
      */
-    private boolean isRepeating () {
+    public boolean isRepeating() {
         return getOptions().getTrigger().has("every");
+    }
+
+    /**
+     * If the notifications priority is high or above.
+     */
+    public boolean isHighPrio() {
+        return getOptions().getPrio() >= PRIORITY_HIGH;
     }
 
     /**
@@ -172,6 +181,8 @@ public final class Notification {
 
         do {
             Date date = request.getTriggerDate();
+
+            Log.d("local-notification", "Next trigger at: " + date);
 
             if (date == null)
                 continue;
@@ -210,7 +221,7 @@ public final class Notification {
                     context, 0, intent, FLAG_CANCEL_CURRENT);
 
             try {
-                switch (options.getPriority()) {
+                switch (options.getPrio()) {
                     case IMPORTANCE_MIN:
                         mgr.setExact(RTC, time, pi);
                         break;
@@ -308,7 +319,7 @@ public final class Notification {
     public void show() {
         if (builder == null) return;
 
-        if (options.isWithProgressBar()) {
+        if (options.showChronometer()) {
             cacheBuilder();
         }
 
@@ -427,7 +438,7 @@ public final class Notification {
     /**
      * Caches the builder instance so it can be used later.
      */
-    private void cacheBuilder () {
+    private void cacheBuilder() {
 
         if (cache == null) {
             cache = new SparseArray<NotificationCompat.Builder>();

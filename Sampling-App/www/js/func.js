@@ -21,9 +21,15 @@ function init()
 	//Handle notifications
 	scheduleNotifications();
 	cordova.plugins.notification.local.on('click', onLocalNotification, this);
-	window.FirebasePlugin.subscribe("Announcement");
-	window.FirebasePlugin.onNotificationOpen(onPushNotification, function(error) {
-		console.error(error);
+	
+	window.FirebasePlugin.hasPermission(function(data){
+		
+		if(!data.isEnabled) window.FirebasePlugin.grantPermission();
+		
+		window.FirebasePlugin.subscribe("Announcement");
+		window.FirebasePlugin.onNotificationOpen(onPushNotification, function(error) {
+			console.error(error);
+		});
 	});
 }
 
@@ -53,28 +59,20 @@ function renderQuestion(qID){
 	Check https://github.com/katzer/cordova-plugin-local-notifications for more information.
 */
 function scheduleNotifications(){
-	cordova.plugins.notification.local.getIds(function (ids) {
-		myApp.alert('IDs: ' + ids.join(' ,'));
-	});
+
+	cordova.plugins.notification.local.schedule([
+		{ id: 1, // give unique ID..
+			title: 'Fill out the morning survey!',// provide title..
+			trigger: { every: { hour: 13, minute: 0 } }, // everyday at 11:00...
+			smallIcon: 'res://calendar'
+		},
+		{ id: 2, 
+			title: 'Fill out the evening survey!',
+			trigger: { every: { hour: 22, minute: 0 } }, // and everyday at 22:00
+			smallIcon: 'res://calendar'
+		}
+	]);
 	
-	//check if notifications are scheduled..
-	cordova.plugins.notification.local.isScheduled(1, function (scheduled) {
-			myApp.alert('notification is ' + scheduled);
-			if(!scheduled){
-				myApp.alert('notification are scheduled');
-				//.. if not schedule notifications
-				cordova.plugins.notification.local.schedule([
-					{ id: 1, // give unique ID..
-						title: 'Fill out the morning survey!',// provide title..
-						trigger: { every: { hour: 11 } } // everyday at 11:00...
-					},
-					{ id: 2, 
-						title: 'Fill out the evening survey!',
-						trigger: { every: { hour: 22 } } // and everyday at 22:00
-					}
-				]);	
-			}
-    });
 }
 
 /*
@@ -116,12 +114,27 @@ function onPushNotification(notification) {
 			//get contents when notification is recieved while the app is open
 			date = new Date();
 			body = notification.body;
-		} 
+		}
 	
 		//store message in cache to retrieve it in message page.
 		var dateString = date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate()+" "+date.getHours()+":"+date.getMinutes();
 		storage.setItem("message"+n, dateString+"::"+body);
 		storage.setItem("messages", Number(n)+1);
+		
+		if(notification.tap){
+			//app was closed so, locate to the message page
+			if(view.activePage.name === "messages") view.router.refreshPage()
+			else view.router.loadPage({url: 'messages.html', animatePages: false});
+		} else {
+			//app is running, update menu page if that is open
+			if(view.activePage.name === "menu")
+			{
+				var m = storage.getItem("readMessages");
+				var d = (Number(n)+1)-Number(m);
+				$$('#readMessages').html(d);
+				$$('#readMessages').css('visibility','visible');
+			}
+		}
 }
 
 /*
@@ -146,6 +159,8 @@ function autorizeUser()
 					//correct login information, proceed using the app.
 					storage.setItem("Uid",data[1]);
 					storage.setItem("login","true");
+					storage.setItem("messages", "0");
+					storage.setItem("readMessages", "0");
 					view.router.loadPage('menu.html');
 				}
 				else
@@ -193,6 +208,8 @@ function registerUser()
 						//user could be registered, proceed with the app.
 						storage.setItem("Uid",data[1]);
 						storage.setItem("login","true");
+						storage.setItem("messages", "0");
+						storage.setItem("readMessages", "0");
 						view.router.loadPage('menu.html');
 						myApp.alert("Thank you for registering.","You are registered!");
 					}

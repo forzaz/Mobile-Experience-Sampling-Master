@@ -2,7 +2,7 @@
  * Experience Sampling App 1.0.0
  * This app allows researchers to conduct surveys remotely using the mobile phone on Android and iOS.
  * 
- * This app is developed by BOSONIC in assignment of the department 
+ * This app is developed by BOSONIC.design in assignment of the department 
  * of Human-Technology Interaction @ Eindhoven, University of Technology.
  * 
  * info@bosonic.design || http://www.bosonic.design/
@@ -15,9 +15,9 @@
 
 //Provide login details for the webinterface that is connected to the server.
 //This allows the app to retrieve information.
-const USER_NAME 	= 'Marc'; 		//server interface username
-const PASSWORD 		= 'test123'; 	//server interface password
-const WEB_BASE 		= 'http://surveyhti.nfshost.com/survey/'; 	//link to where the server interface is located
+const USER_NAME 	= 'Marc'; 			//server interface username
+const PASSWORD 		= 'test123'; 		//server interface password
+const WEB_BASE 		= 'http://surveyhti.nfshost.com/survey/'; 	//link to where the server interface is located, DO NOT FORGET LEADING SLASH '/' IN THE END OF THE STRING
 const AUTORIZATION 	= "?user="+USER_NAME+"&pass="+PASSWORD; 	//<-- no need to change
 
 //CAMERA MODULE CONFIG

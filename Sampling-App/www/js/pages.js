@@ -2,7 +2,7 @@
  * Experience Sampling App 1.0.0
  * This app allows researchers to conduct surveys remotely using the mobile phone on Android and iOS.
  * 
- * This app is developed by BOSONIC in assignment of the department 
+ * This app is developed by BOSONIC.design in assignment of the department 
  * of Human-Technology Interaction @ Eindhoven, University of Technology.
  * 
  * info@bosonic.design || http://www.bosonic.design/
@@ -32,8 +32,6 @@ $$(document).on('deviceready', function() {
 		view.hideNavbar(false);
 		$$(".initializer").css("display","none");
 		$$('#login').on('click', autorizeUser);
-		storage.setItem("messages", 0);
-		storage.setItem("readMessages", 0);
 	}
 });
 
@@ -62,8 +60,15 @@ myApp.onPageInit('menu', function (page) {
 	
 	if(storage.getItem("messages") !== storage.getItem("readMessages"))
 	{
-		//show message-
+		var n = storage.getItem("messages");
+		var m = storage.getItem("readMessages");
+		var d = Number(n)-Number(m);
+		$$('#readMessages').html(d);
+		$$('#readMessages').css('visibility','visible');
 	}
+});
+myApp.onPageBeforeAnimation('menu', function (page) {
+	if(storage.getItem("messages") === storage.getItem("readMessages")) $$('#readMessages').css('visibility','hidden');
 });
 
 //MESSAGES---------------------------

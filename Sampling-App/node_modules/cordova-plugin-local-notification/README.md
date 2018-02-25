@@ -59,9 +59,9 @@ See the _0.8_ branch if you cannot upgrade. Further development for `v0.9-beta` 
 
 __Known issues__
 
-- Support for Android Orio is limited yet.
+- Support for Android Oreo is limited yet.
 - v0.9 and v0.8 aren't compatible with each other (Wont fix)
-- __Not compatible yet with Ionic__. Their wrapper is not part of this plugin. In future I will contribute to them to fix such issues in time. But for the moment I am busy enough with the plugin itself.
+- __Not compatible yet with Ionic Native__. Their wrapper is not part of this plugin. In future I will contribute to them to fix such issues in time. But for the moment I am busy enough with the plugin itself.
 
 Please report bugs or missing features!
 
@@ -97,10 +97,11 @@ A notification does have a set of configurable properties. Not all of them are s
 
 | Property      | Property      | Property      | Property      | Property      | Property      | Property      | Property      |
 | :------------ | :------------ | :------------ | :------------ | :------------ | :------------ | :------------ | :------------ |
-| id            | data          | actionGroupId | summary       | led           | showWhen      | channel       | actions       |
+| id            | data          | actionGroupId | summary       | led           | clock         | channel       | actions       |
 | text          | icon          | attachments   | smallIcon     | color         | defaults      | launch        | groupSummary  |
 | title         | silent        | progressBar   | sticky        | vibrate       | priority      | mediaSession  | foreground    |
 | sound         | trigger       | group         | autoClear     | lockscreen    | number        | badge         | wakeup        |
+| timeoutAfter  |
 
 For their default values see:
 
@@ -286,7 +287,7 @@ The properties depend on the trigger type. Not all of them are supported across 
 |              | every         | String  | `quarter`        | x       |     | x       |
 |              | every         | String  | `year`           | x       | x   | x       |
 |              | before        | Date    |                  | x       |     | x       |
-|              | firstAt       | Date    |                  | x       | x   | x       |
+|              | firstAt       | Date    |                  | x       |     | x       |
 | Match        |
 |              | count         | Int     |                  | x       |     | x       |
 |              | every         | Object  | `minute`         | x       | x   | x       |
@@ -300,7 +301,7 @@ The properties depend on the trigger type. Not all of them are supported across 
 |              | every         | Object  | `quarter`        |         | x   |
 |              | every         | Object  | `year`           | x       | x   | x       |
 |              | before        | Date    |                  | x       |     | x       |
-|              | after         | Date    |                  | x       | x   | x       |
+|              | after         | Date    |                  | x       |     | x       |
 | Location     |
 |              | center        | Array   | `[lat, long]`    |         | x   |
 |              | radius        | Int     |                  |         | x   |
@@ -476,7 +477,7 @@ document.addEventListener('deviceready', function () {
 
 ## Methods
 
-All methods work asynchron and accept callback methods.
+All methods work asynchronous and accept callback methods.
 See the sample app for how to use them.
 
 | Method   | Method            | Method          | Method         | Method      |

@@ -28,6 +28,7 @@
 @interface APPLocalNotification ()
 
 @property (strong, nonatomic) UNUserNotificationCenter* center;
+@property (NS_NONATOMIC_IOSONLY, nullable, weak) id <UNUserNotificationCenterDelegate> delegate;
 @property (readwrite, assign) BOOL deviceready;
 @property (readwrite, assign) BOOL isActive;
 @property (readonly, nonatomic, retain) NSArray* launchDetails;
@@ -36,6 +37,11 @@
 @end
 
 @implementation APPLocalNotification
+
+UNNotificationPresentationOptions const OptionNone  = UNNotificationPresentationOptionNone;
+UNNotificationPresentationOptions const OptionBadge = UNNotificationPresentationOptionBadge;
+UNNotificationPresentationOptions const OptionSound = UNNotificationPresentationOptionSound;
+UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentationOptionAlert;
 
 @synthesize deviceready, isActive, eventQueue;
 
@@ -102,7 +108,7 @@
         }
 
         [self check:command];
-     }];
+    }];
 }
 
 /**
@@ -131,7 +137,7 @@
 
             [self fireEvent:@"update" notification:notification];
         }
-        
+
         [self check:command];
     }];
 }
@@ -244,7 +250,7 @@
 
         CDVPluginResult* result;
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                     messageAsString:type];
+                                   messageAsString:type];
 
         [self.commandDelegate sendPluginResult:result
                                     callbackId:command.callbackId];
@@ -462,7 +468,7 @@
 {
     __weak APPLocalNotification* weakSelf  = self;
     UNNotificationRequest* request = notification.request;
-    NSString* event = [notification.request wasUpdated] ? @"update" : @"add";
+    NSString* event = [request wasUpdated] ? @"update" : @"add";
 
     [_center addNotificationCategory:notification.category];
 
@@ -502,13 +508,17 @@
  */
 - (void) userNotificationCenter:(UNUserNotificationCenter *)center
         willPresentNotification:(UNNotification *)notification
-          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
+          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))handler
 {
     UNNotificationRequest* toast = notification.request;
 
+    [_delegate userNotificationCenter:center
+              willPresentNotification:notification
+                withCompletionHandler:handler];
+
     if ([toast.trigger isKindOfClass:UNPushNotificationTrigger.class])
         return;
-    
+
     APPNotificationOptions* options = toast.options;
 
     if (![notification.request wasUpdated]) {
@@ -516,11 +526,11 @@
     }
 
     if (options.silent) {
-        completionHandler(UNNotificationPresentationOptionNone);
+        handler(OptionNone);
     } else if (!isActive || options.priority > 0) {
-        completionHandler(UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound|UNNotificationPresentationOptionAlert);
+        handler(OptionBadge|OptionSound|OptionAlert);
     } else {
-        completionHandler(UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound);
+        handler(OptionBadge|OptionSound);
     }
 }
 
@@ -530,12 +540,16 @@
  */
 - (void) userNotificationCenter:(UNUserNotificationCenter *)center
  didReceiveNotificationResponse:(UNNotificationResponse *)response
-          withCompletionHandler:(void (^)(void))completionHandler
+          withCompletionHandler:(void (^)(void))handler
 {
     UNNotificationRequest* toast = response.notification.request;
 
-    completionHandler();
-    
+    [_delegate userNotificationCenter:center
+       didReceiveNotificationResponse:response
+                withCompletionHandler:handler];
+
+    handler();
+
     if ([toast.trigger isKindOfClass:UNPushNotificationTrigger.class])
         return;
 
@@ -576,6 +590,7 @@
 {
     eventQueue = [[NSMutableArray alloc] init];
     _center    = [UNUserNotificationCenter currentNotificationCenter];
+    _delegate  = _center.delegate;
 
     _center.delegate = self;
     [_center registerGeneralNotificationCategory];
@@ -694,7 +709,7 @@
     }
 
     js = [NSString stringWithFormat:
-          @"cordova.plugins.notification.local.core.fireEvent('%@', %@)",
+          @"cordova.plugins.notification.local.fireEvent('%@', %@)",
           event, params];
 
     if (deviceready) {

@@ -10,9 +10,6 @@
     "cordova-plugin-camera": {
       "PACKAGE_NAME": "com.tue.experienceSampler"
     },
-    "cordova-plugin-device": {
-      "PACKAGE_NAME": "com.tue.experienceSampler"
-    },
     "cordova-plugin-file": {
       "PACKAGE_NAME": "com.tue.experienceSampler"
     },
@@ -26,7 +23,7 @@
       "PACKAGE_NAME": "com.tue.experienceSampler"
     },
     "cordova-plugin-googlemaps": {
-      "API_KEY_FOR_ANDROID": "AIzaSyBCoxUsEwA-YqKTVzSKUA0DDg8iWLSUzKY",
+      "API_KEY_FOR_ANDROID": "AIzaSyB_XS3KWoXABsgz14A9dCzFc6QF45s8C0c",
       "PLAY_SERVICES_VERSION": "11.8.0",
       "ANDROID_SUPPORT_V4_VERSION": "24.1.0",
       "PACKAGE_NAME": "com.tue.experienceSampler"
@@ -46,6 +43,9 @@
   },
   "dependent_plugins": {
     "cordova-plugin-badge": {
+      "PACKAGE_NAME": "com.tue.experienceSampler"
+    },
+    "cordova-plugin-device": {
       "PACKAGE_NAME": "com.tue.experienceSampler"
     }
   }

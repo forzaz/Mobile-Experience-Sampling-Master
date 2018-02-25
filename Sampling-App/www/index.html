@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; default-src *; connect-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: http://ssl.gstatic.com; img-src 'self' data:; connect-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
 
     <!-- Required meta tags-->
     <meta charset="utf-8">
@@ -15,7 +15,8 @@
 
     <link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
     <link rel="stylesheet" href="lib/framework7/css/framework7.ios.colors.min.css">
-
+	
+	<link rel="stylesheet" href="css/fonts.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -45,16 +46,14 @@
                         <div class="content-block full">
 							<div class="initializer"></div>
 							
-                            <h2 style="margin-bottom: 15px; margin-top: 65px;">Welcome to</h2>
-							<h1 style="margin-top: 0;">Spaced<br/>Learner</h1>
-							<p>
-								<br/><br/>
-								Username: <input id="username" type="text" style="margin-bottom: 10px;" /><br/>
-								Password: <input id="password" type="password" style="margin-bottom: 10px;" />
-							</p>
+                            <h2 class="index" style="margin-bottom: 0px; margin-top: 65px;">Welcome to</h2><br/>
+							<h1 class="index" style="margin-top: 0; margin-bottom: 50px;">Spaced<br/>Learner</h1>
 							<p class="center">
-								<a id="login" class="button buttonLogin">Log In</a> <a href="register.html" class="button buttonLogin" style="margin-bottom: 10px;">Register</a><br/>
-								<a href="forgetpassword.html">Forget your password?</a>
+								<input id="username" class="index" type="text" placeholder="Username" /><br/>
+								<input id="password" class="index" type="password" placeholder="Password" /><br/>
+								<a id="login" class="button index">Log In</a><br/>
+								<a href="register.html" class="button index register">Register</a><br/>
+								<a class="index" href="forgetpassword.html">Forget your password?</a>
 							</p>
                         </div>
 						

@@ -1,27 +1,27 @@
 {
-  "_from": "cordova-plugin-local-notification",
-  "_id": "cordova-plugin-local-notification@0.9.0-beta.2",
+  "_from": "cordova-plugin-local-notification@0.9.0-beta.3",
+  "_id": "cordova-plugin-local-notification@0.9.0-beta.3",
   "_inBundle": false,
-  "_integrity": "sha512-63n77K1pt8dnbWnNR8QWETi9Glezi1bvNHvHWmGNIOv0xCb0phZnm+Ku49BQ+omwe8Z5voMvrA4I03SYPpv38w==",
+  "_integrity": "sha512-L3Z1velxrkm9nHFcvLnMgBPZjKFt6hwM6hn1lA+JFwIR26Yw6UF72z+/lRMBclAcOxBIDYCqeaLgvezmajjuEg==",
   "_location": "/cordova-plugin-local-notification",
   "_phantomChildren": {},
   "_requested": {
-    "type": "tag",
+    "type": "version",
     "registry": true,
-    "raw": "cordova-plugin-local-notification",
+    "raw": "cordova-plugin-local-notification@0.9.0-beta.3",
     "name": "cordova-plugin-local-notification",
     "escapedName": "cordova-plugin-local-notification",
-    "rawSpec": "",
+    "rawSpec": "0.9.0-beta.3",
     "saveSpec": null,
-    "fetchSpec": "latest"
+    "fetchSpec": "0.9.0-beta.3"
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/cordova-plugin-local-notification/-/cordova-plugin-local-notification-0.9.0-beta.2.tgz",
-  "_shasum": "e3a0b4a35d11f95bb4f1e367d9baee9909cca695",
-  "_spec": "cordova-plugin-local-notification",
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-local-notification/-/cordova-plugin-local-notification-0.9.0-beta.3.tgz",
+  "_shasum": "f63d49b90ea9cdf1a5de53e7eb478a09bb236f93",
+  "_spec": "cordova-plugin-local-notification@0.9.0-beta.3",
   "_where": "D:\\Gebruikers\\Marc\\Documents\\_business\\Eindhoven\\Mobile-Experience-Sampling-App-Cordova",
   "author": {
     "name": "Sebastián Katzer"
@@ -79,5 +79,5 @@
     "type": "git",
     "url": "git+https://github.com/katzer/cordova-plugin-local-notifications.git"
   },
-  "version": "0.9.0-beta.2"
+  "version": "0.9.0-beta.3"
 }

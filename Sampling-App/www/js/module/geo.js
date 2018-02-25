@@ -132,7 +132,7 @@ var geoLocationManager = new function()
 					
 					var adressString = "";
 					for(i = 0; i < adress.length; i++)
-					{	if(adress[i] !== "" && adress[i] !== "undefined, ") adressString += adress[i];	}
+					{	if(adress[i] !== "" && adress[i] !== "undefined, " && adress[i] !== "(null), " && adress[i] !== ", ") adressString += adress[i];	}
 					
 					geoLocationManager.marker = marker;
 					marker.setTitle(adressString).showInfoWindow();

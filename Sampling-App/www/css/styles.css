@@ -12,7 +12,8 @@
  */
 
 *{
-	box-sizing:border-box;
+	box-sizing: border-box;
+	font-family: "Roboto", sans-serif;
 }
 
 /*----------styling-----------*/
@@ -21,7 +22,10 @@
 }
 
 .navbar{
-	background-color: #FFF66B;
+	background-color: #353E87;
+	color: #fff;
+	height: 56px;
+	box-shadow: 0px 0px 10px rgba(0,0,0,0.6);
 }
 
 .page{
@@ -34,7 +38,7 @@
 }
 
 .content-block{
-	margin: 58px 1px 33px;
+	margin: 70px 1px 33px;
 }
 
 .page-content .content-block.survey{
@@ -43,7 +47,7 @@
 }
 
 .page-content .content-block.full{
-	background-color: #FFF66B;
+	background-color: #fff;
 	position: fixed;
 	width: 100%;
 	height: 100%;
@@ -68,36 +72,115 @@
 	text-align: center;
 }
 
+h1.center{
+	text-align: center;
+	width: 100%;
+}
+
 /*----------assets-----------*/
+a.index{
+	color: #000;
+	text-decoration: underline;
+}
+
 a.button{
-	background-color: #232323;
+	background-color: #353E87;
 	border: 0;
 	color: #fff;
 	width: auto;
 	height: auto;
-	min-width: 200px;
+	min-width: 180px;
 	display: inline-block;
-	font-size: 20px;
+	font-size: 15px;
 	line-height: 40px;
-	padding: 8px 20px;
+	padding: 4px 16px;
+	margin-bottom: 20px;
+	font-weight: 400;
+	border-radius: 15px;
+	position: relative;
+	overflow: visible;
 }
 
-a.buttonLogin{
+a.button .buttonNotification{
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	right: -10px;
+	top: -7px;
+	background-color: #CD3C65;
+	border-radius: 50%;
+	color: #fff;
+	line-height: 30px;
+	font-size: 15px;
+	visibility: hidden;
+}
+
+a.button:hover, a.button:active{
+	background-color: #CD3C65;
+}
+
+a.button.index{
 	font-size: 15px;
 	padding: 4px 16px;
-	max-width: 160px;
+	min-width: 0px;
+	width: 180px;
+	margin-bottom: 5px;
+	text-decoration: none;
 }
 
-/*----------text styles-----------*/
-h1{
-	color: #000;
+a.index.register{
+	background-color: #787980;
+	margin-bottom: 20px;
+}
+
+input.index{
+	width: 180px;
+	border: none;
+	border-bottom: 1px solid;
+	margin-bottom: 20px;
+}
+
+a.link{
+	color: #fff;
+	font-size: 12px;
+	opacity: 0.5;
+}
+
+i.icon.icon-log-out{
+	height: 20px;
+	width: 20px;
+	background-image: url(../lib/framework7/img/i-log-out.svg);
+}
+
+i.icon.icon-back{
+	height: 20px;
+	width: 20px;
+	background-image: url(../lib/framework7/img/i-back.svg);
+}
+
+/*----------text styles/index-----------*/
+h1.index{
+	color: #353E87;
 	font-size: 50px;
 	line-height: 60px;
+	font-weight: 700;
 }
-h2{
-	color: #666;
+h2.index{
+	color: #CD3C65;
 	font-size: 40px;
 	line-height: 38px;
+	font-weight: 700;
+}
+
+input.index{
+	
+}
+
+h1{
+	color: #CD3C65;
+	font-size: 30px;
+	font-weight: 500;
+	margin-bottom: 40px;
 }
 
 /*-----------messages-------------*/
@@ -161,6 +244,11 @@ form .required{
 	height: 150px;
 }
 
+.dateQ, .timeQ{
+	-webkit-appearance: none;
+	min-height: 38px !important;
+}
+
 /* Customize the label (the container) */
 .checkContainer {
   display: block;
@@ -199,7 +287,7 @@ form .required{
 
 /* When the checkbox is checked, add a blue background */
 .checkContainer  input:checked ~ .checkmark {
-  background-color: #2EE577;
+  background-color: #CD3C65;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
@@ -283,7 +371,7 @@ form .required{
 
 /* When the radio button is checked, add a blue background */
 .radiocontainer input:checked ~ .radiocheckmark {
-    background-color: #2EE577;
+    background-color: #CD3C65;
 }
 
 /* Create the indicator (the dot/circle - hidden when not checked) */
@@ -334,7 +422,7 @@ form .required{
     width: 22px;
     height: 22px;
     border-radius: 50%; 
-    background: #2EE577;
+    background: #CD3C65;
     cursor: pointer;
     border: none;
 }
@@ -343,7 +431,7 @@ form .required{
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: #2EE577;
+    background: #CD3C65;
     cursor: pointer;
     border: none;
 }
@@ -375,7 +463,7 @@ form .required{
 }
 
 .fileContainer .optionContainer .button:active{
-   background-color: #2EE577;
+   background-color: #CD3C65;
 }
 
 .fileContainer .optionContainer .button.camera{
@@ -432,6 +520,7 @@ form .required{
 
 #map{
 	position: sticky !important;
+	position: -webkit-sticky !important;
 	overflow: hidden;
 	top: 0;
 	width: 100%;
@@ -452,7 +541,7 @@ form .required{
 }
 
 #map #closeMap:active{
-	background-color: #2EE577;
+	background-color: #CD3C65;
 }
 
 .messageOverlay{
@@ -478,8 +567,11 @@ form .required{
 	padding-top: 10px;
 	padding-bottom: 10px;
 	height: auto;
+	color: #CD3C65;
+	border: 1px solid #CD3C65;
 }
 
 .button#survey_submit:active{
-	background-color: #2EE577;
+	background-color: #CD3C65;
+	color: #fff;
 }

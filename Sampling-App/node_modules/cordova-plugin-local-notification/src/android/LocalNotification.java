@@ -531,7 +531,7 @@ public class LocalNotification extends CordovaPlugin {
             params = data.toString();
         }
 
-        js = "cordova.plugins.notification.local.core.fireEvent(" +
+        js = "cordova.plugins.notification.local.fireEvent(" +
                 "\"" + event + "\"," + params + ")";
 
         if (launchDetails == null && !deviceready && toast != null) {
@@ -580,6 +580,13 @@ public class LocalNotification extends CordovaPlugin {
             return false;
 
         return view.getView().getWindowVisibility() == View.VISIBLE;
+    }
+
+    /**
+     * If the app is running.
+     */
+    static boolean isAppRunning() {
+        return webView != null;
     }
 
     /**

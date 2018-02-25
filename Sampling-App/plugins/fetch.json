@@ -66,9 +66,9 @@
   "cordova-plugin-device": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-device@^2.0.1"
+      "id": "cordova-plugin-device"
     },
-    "is_top_level": true,
+    "is_top_level": false,
     "variables": {}
   },
   "cordova-plugin-badge": {
@@ -82,7 +82,7 @@
   "cordova-plugin-local-notification": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-local-notification"
+      "id": "cordova-plugin-local-notification@0.9.0-beta.3"
     },
     "is_top_level": true,
     "variables": {}
@@ -102,7 +102,7 @@
     },
     "is_top_level": true,
     "variables": {
-      "API_KEY_FOR_ANDROID": "AIzaSyBCoxUsEwA-YqKTVzSKUA0DDg8iWLSUzKY"
+      "API_KEY_FOR_ANDROID": "AIzaSyB_XS3KWoXABsgz14A9dCzFc6QF45s8C0c"
     }
   }
 }
