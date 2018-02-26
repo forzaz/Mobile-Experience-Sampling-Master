@@ -15,9 +15,9 @@
 
 //Provide login details for the webinterface that is connected to the server.
 //This allows the app to retrieve information.
-const USER_NAME 	= 'Marc'; 			//server interface username
-const PASSWORD 		= 'test123'; 		//server interface password
-const WEB_BASE 		= 'http://surveyhti.nfshost.com/survey/'; 	//link to where the server interface is located, DO NOT FORGET LEADING SLASH '/' IN THE END OF THE STRING
+const USER_NAME 	= 'app_user_name'; 			//server interface username
+const PASSWORD 		= 'app_user_password'; 		//server interface password
+const WEB_BASE 		= 'http://yourweb.com'; 	//link to where the server interface is located
 const AUTORIZATION 	= "?user="+USER_NAME+"&pass="+PASSWORD; 	//<-- no need to change
 
 //CAMERA MODULE CONFIG
