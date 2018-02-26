@@ -216,14 +216,20 @@ var survey = new function() {
 				$$("#survey_submit").on('click', survey.send);
 				
 				/*Add camera functionalities*/
-				$$("#takePic").on('click',function(){
-					cameraManager.takePicture($$(this).attr("name"));
+				$$(".button.camera").each(function( index ) {
+  					$$(this).on('click',function(){
+						cameraManager.takePicture($$(this).attr("name"));
+					});
 				});
-				$$("#removePic").on('click',function(){
-					cameraManager.clearQuestion($$(this).attr("name"));
+				$$(".button.album").each(function( index ) {
+  					$$(this).on('click',function(){
+						cameraManager.choosePicture($$(this).attr("name"));
+					});
 				});
-				$$("#choosePic").on('click',function(){
-					cameraManager.choosePicture($$(this).attr("name"));
+				$$(".fileContainer.Image .preview .close").each(function( index ) {
+  					$$(this).on('click',function(){
+						cameraManager.clearQuestion($$(this).attr("name"));
+					});
 				});
 
 				/*Add location functionalities*/
@@ -233,18 +239,26 @@ var survey = new function() {
 					if($$("input",this).is(':checked')) $$("input",this).attr("value", "");
 					else geoLocationManager.getCurrentLocation($$("input",this).attr("name"));
 				});
-				$$("#openMap").on('click',function(){
-					geoLocationManager.openMapsWindow($$(this).attr("name"));
+				$$(".button.marker").each(function( index ) {
+  					$$(this).on('click',function(){
+						geoLocationManager.openMapsWindow($$(this).attr("name"));
+					});
 				});
 				$$("#closeMap").on('click',geoLocationManager.closeMapsWindow);
 				
 				/*Add recording functionalities*/
-				$$("#record").on('click',function(){
-					microphoneManager.toggleRecording($$(this).attr("name"));
+				$$(".button.voice").each(function( index ) {
+  					$$(this).on('click',function(){
+						microphoneManager.toggleRecording($$(this).attr("name"));
+					});
 				});
-				$$("#playRecord").on('click',function(){
-					microphoneManager.togglePlay($$(this).attr("name"));
+				$$(".button.play").each(function( index ) {
+  					$$(this).on('click',function(){
+						microphoneManager.togglePlay($$(this).attr("name"));
+					});
 				});
+				
+				
 				
 				//clear loading screen
 				$$(".messageOverlay").css("display","none");
