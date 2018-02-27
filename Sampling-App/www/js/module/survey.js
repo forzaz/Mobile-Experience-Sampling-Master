@@ -134,21 +134,17 @@ var survey = new function() {
 							break;
 
 							case "Date":
-								type = data[3];
-								if(type !== "text"){
-									HTML += "<input class='dateQ' type='date' name='q"+data[0]+"' data-required='"+data[4]+"' />";
-								} else {
-									HTML += "<input class='dateQ' type='text' name='q"+data[0]+"' data-required='"+data[4]+"' />";
-								}
+								HTML += "<input class='dateQ' type='date' name='q"+data[0]+"' data-required='"+data[4]+"' />";
+							break;
+								
+							case "DateText":
+								HTML += "<input class='dateQ day' maxlength='2' type='number' name='q"+data[0]+"' data-required='"+data[4]+"' placeholder='dd' />/";
+								HTML += "<input class='dateQ month' maxlength='2' type='number' name='q"+data[0]+"' data-required='"+data[4]+"' placeholder='mm' />/";
+								HTML += "<input class='dateQ year' maxlength='4' type='number' name='q"+data[0]+"' data-required='"+data[4]+"' placeholder='yyyy' />";
 							break;
 
 							case "Time":
-								type = data[3];
-								if(type !== "text"){
-									HTML += "<input class='timeQ' type='time' name='q"+data[0]+"' data-required='"+data[4]+"' />";
-								} else {
-									HTML += "<input class='timeQ' type='text' name='q"+data[0]+"' data-required='"+data[4]+"' />";
-								}
+								HTML += "<input class='timeQ' type='time' name='q"+data[0]+"' data-required='"+data[4]+"' />";
 							break;
 
 							case "Dropdown":
@@ -296,6 +292,25 @@ var survey = new function() {
 					if(val === "" && $$("#questions [name='"+q.name+"']").attr("data-required") === "1")
 					{
 						$$("#questions [name='"+q.name+"']").addClass("required");
+						returnFalse = true;
+					}
+				break;
+				case "DateText":
+					$$("#questions [name='"+q.name+"'].day").removeClass("required");
+					$$("#questions [name='"+q.name+"'].month").removeClass("required");
+					$$("#questions [name='"+q.name+"'].year").removeClass("required");
+					var day = $$("#questions [name='"+q.name+"'].day").val();
+					var month = $$("#questions [name='"+q.name+"'].month").val();
+					var year = $$("#questions [name='"+q.name+"'].year").val();
+					if(day != "" && month != "" && year != "" && $$("#questions [name='"+q.name+"']").attr("data-required") !== "1")
+					{
+						val = day+"/"+month+"/"+year;
+					}
+					else
+					{
+						$$("#questions [name='"+q.name+"'].day").addClass("required");
+						$$("#questions [name='"+q.name+"'].month").addClass("required");
+						$$("#questions [name='"+q.name+"'].year").addClass("required");
 						returnFalse = true;
 					}
 				break;

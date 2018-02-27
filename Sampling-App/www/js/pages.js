@@ -24,6 +24,7 @@ var view = myApp.addView('.view-main', {dynamicNavbar: true, swipeback: false});
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
 	
+	document.addEventListener("backbutton", onBackKeyDown, false);
 	// Check if user is logged in and send him to menu.html...
 	if(storage.getItem("login") === "true")	view.router.loadPage({url: 'menu.html', animatePages: false});
 	else
@@ -115,3 +116,22 @@ myApp.onPageAfterAnimation('survey', function (page) {
 	}
 	
 });
+
+//ANDROID BACK KEY NAVIGATION-----------
+function onBackKeyDown()
+{
+	//get current page name
+	switch(view.activePage.name)
+	{
+		//go one page back
+		case "messages":
+		case "register":
+		case "forget_password":
+			view.router.back();
+		break;
+		case "menu":
+		case "login":
+			navigator.app.exitApp();
+		break;
+	}
+}

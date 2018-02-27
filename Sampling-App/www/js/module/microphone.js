@@ -23,6 +23,10 @@ var microphoneManager = new function()
 	this.playing = false;
 	this.recording = false;
 	
+	this.count = 0;
+	this.timer;
+	this.duration = -1;
+	
 	this.init = function(){
 												AUD_EXTENSION = ".wav";
 		if(device.platform === "Android") 		AUD_EXTENSION = ".amr";
@@ -95,7 +99,18 @@ var microphoneManager = new function()
 		$$(".fileContainer[name='"+microphoneManager.qID+"'] #playRecord").toggleClass("play stop");
 		microphoneManager.getMedia(src);
 		microphoneManager.mediaRec.play();
+		microphoneManager.timer = setInterval(microphoneManager.duringPlay, 100);
 		microphoneManager.playing = true;
+	};
+	
+	this.duringPlay = function(){
+		microphoneManager.count = microphoneManager.count+100;
+		
+		if(microphoneManager.duration < 0)
+			microphoneManager.duration = microphoneManager.mediaRec.getDuration();
+		
+		if(microphoneManager.duration > 0 && microphoneManager.count/1000 > microphoneManager.duration)
+			microphoneManager.stopPlay();
 	};
 	
 	this.stopPlay = function(){
@@ -105,6 +120,10 @@ var microphoneManager = new function()
 			microphoneManager.mediaRec.stop();
 			microphoneManager.mediaRec.release();
 			microphoneManager.playing = false;
+			
+			microphoneManager.count = 0;
+			microphoneManager.duration = -1;
+			clearInterval(microphoneManager.timer);
 		}
 	};
 	
@@ -113,10 +132,10 @@ var microphoneManager = new function()
 		microphoneManager.src = src;
 		microphoneManager.mediaRec = new Media(src,
 				function() {
-            		console.log("recordAudio():Audio Success");
+            		//console.log("recordAudio():Audio Success");
         		},
         		function(err) {
-            		console.log("recordAudio():Audio Error: "+ err.code);
+            		//console.log("recordAudio():Audio Error: "+ err.code);
         		}
 		);
 	};

@@ -113,7 +113,7 @@ function onPushNotification(notification) {
 		else{
 			//get contents when notification is recieved while the app is open
 			date = new Date();
-			body = notification.body;
+			body = notification.content;
 		}
 	
 		//store message in cache to retrieve it in message page.
@@ -255,8 +255,8 @@ function logout(){
 	Unschedule notifications callback when logging out.
 */
 function unScheduleNotifications(){
-	myApp.alert('notification are unscheduled');
+	/*myApp.alert('notification are unscheduled');
 	cordova.plugins.notification.local.getIds(function (ids) {
 		myApp.alert('IDs: ' + ids.join(' ,'));
-	});
+	});*/
 }
