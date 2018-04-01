@@ -9,7 +9,7 @@
  * info@bosonic.design || http://www.bosonic.design/
  * hti@tue.nl || https://www.tue.nl/en/university/departments/industrial-engineering-innovation-sciences/research/research-groups/human-technology-interaction/
  * 
- * Released on: March, 2018 in Experience Sampling App 1.0.0
+ * Released on: April, 2018 in Experience Sampling App 1.0.1
  */
 
 var geoLocationManager = new function()
@@ -22,10 +22,93 @@ var geoLocationManager = new function()
 	this.currentLat = 0;
 	this.currentLng = 0;
 	
-	this.init = function(div){
-		geoLocationManager.openMapsWindow();
+	//standard functions
+	this.initModule = function() {
+		
 	};
 	
+	this.initOnPage = function() {
+		HTML = "<div id='map' class='preview'><div id='closeMap'>Set location</div></div>";
+		$$(".page[data-page='survey'] .page-content").append(HTML);
+		$$("#shareLoc").on('click',function(){
+			if($$("input",this).is(':checked')) $$("input",this).attr("value", "");
+			else geoLocationManager.getCurrentLocation($$("input",this).attr("name"));
+		});
+		$$(".button.marker").each(function( index ) {
+  			$$(this).on('click',function(){
+				geoLocationManager.openMapsWindow($$(this).attr("name"));
+			});
+		});
+		$$("#closeMap").on('click',geoLocationManager.closeMapsWindow);
+	};
+	
+	this.renderQuestions = function(type,ID,labelData){
+		var HTML = "";
+		switch(type)
+		{
+			case "ShareLocation":
+				HTML = "<div class='selectContainer' name='q"+ID+"'>";
+				HTML += "<label id='shareLoc' class='checkContainer'>I accept to share my current location";
+				HTML += "<input type='checkbox' name='q"+ID+"' id='accept' value='' />";
+				HTML += "<span class='checkmark'></span>";
+				HTML += "</label>";
+				HTML += "</div>"
+			break;
+								
+			case "ChooseLocation":
+				HTML = "<div class='fileContainer Location' name='q"+ID+"' data-value=''>";
+				HTML += "	<p id='location'>No location selected</p>";
+				HTML += "	<div class='optionContainer'>";
+				HTML += "		<div id='openMap' class='button marker' name='q"+ID+"'></div>";
+				HTML += "		<p class='label'>Choose a location</p>";
+				HTML += "	</div>";
+				HTML += "</div>";
+			break;
+		}
+		return HTML;
+	};
+	
+	this.validate = function(type,ID,required,rID){
+		var info = {};
+		info.val = "";
+		info.error = false;
+		info.checked = false;
+		
+		switch(type)
+		{
+			case "ShareLocation":
+				if($$("#questions #shareLoc input[name='"+ID+"']:checked").length > 0)
+				{
+					$$("#questions .selectContainer[name='"+ID+"']").removeClass("required");
+					info.val = $$("#questions #shareLoc input[name='"+ID+"']:checked").val();
+				}
+				else
+				{
+					if(required === "1")
+					{
+						$$("#questions .selectContainer[name='"+ID+"']").addClass("required");
+						info.error = true;
+					}
+					info.val = "Not agreed";
+				}
+				info.checked = true;
+			break;
+			
+			case "ChooseLocation":
+				$$(".fileContainer[name='"+ID+"']").removeClass("required");
+				info.val = $$(".fileContainer[name='"+ID+"']").attr("data-value");
+				if(info.val === "" && required === "1")
+				{
+					$$(".fileContainer[name='"+ID+"']").addClass("required");
+					info.error = true;
+				}
+				info.checked = true;
+			break;
+		}
+		return info;
+	};
+	
+	//module specific functions
 	this.getCurrentLocation = function(qID){
 		if(geoLocationManager.qID === -1){
 			geoLocationManager.qID = qID;
@@ -159,3 +242,4 @@ var geoLocationManager = new function()
 		geoLocationManager.qID = -1;
 	};
 }
+modules.push(geoLocationManager);

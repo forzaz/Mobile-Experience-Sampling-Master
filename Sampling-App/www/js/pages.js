@@ -1,5 +1,5 @@
 /**
- * Experience Sampling App 1.0.0
+ * Experience Sampling App 1.0.1
  * This app allows researchers to conduct surveys remotely using the mobile phone on Android and iOS.
  * 
  * This app is developed by BOSONIC.design in assignment of the department 
@@ -8,7 +8,7 @@
  * info@bosonic.design || http://www.bosonic.design/
  * hti@tue.nl || https://www.tue.nl/en/university/departments/industrial-engineering-innovation-sciences/research/research-groups/human-technology-interaction/
  * 
- * Released on: March, 2018
+ * Released on: April, 2018
  */
 
 

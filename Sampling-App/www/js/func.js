@@ -8,7 +8,7 @@
  * info@bosonic.design || http://www.bosonic.design/
  * hti@tue.nl || https://www.tue.nl/en/university/departments/industrial-engineering-innovation-sciences/research/research-groups/human-technology-interaction/
  * 
- * Released on: March, 2018 in Experience Sampling App 1.0.0
+ * Released on: April, 2018 in Experience Sampling App 1.0.1
  */
 
 /*
@@ -16,8 +16,13 @@
 */
 function init()
 {
+	//initialize app components
 	survey.init();
-	microphoneManager.init();
+	modules.forEach(function(module){
+		if (typeof module.initModule === "function" && qHTML === "") {
+			qHTML = module.initModule();
+		}
+	});
 	
 	//Handle notifications
 	scheduleNotifications();

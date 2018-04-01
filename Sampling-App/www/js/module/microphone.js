@@ -8,7 +8,7 @@
  * info@bosonic.design || http://www.bosonic.design/
  * hti@tue.nl || https://www.tue.nl/en/university/departments/industrial-engineering-innovation-sciences/research/research-groups/human-technology-interaction/
  * 
- * Released on: March, 2018 in Experience Sampling App 1.0.0
+ * Released on: April, 2018 in Experience Sampling App 1.0.1
  */
 
 var AUD_EXTENSION;
@@ -27,7 +27,8 @@ var microphoneManager = new function()
 	this.timer;
 	this.duration = -1;
 	
-	this.init = function(){
+	//standard functions
+	this.initModule = function() {
 												AUD_EXTENSION = ".wav";
 		if(device.platform === "Android") 		AUD_EXTENSION = ".amr";
 		
@@ -35,6 +36,66 @@ var microphoneManager = new function()
 		else if(device.platform === "Android") 	AUD_PATH = cordova.file.externalRootDirectory;
 	};
 	
+	this.initOnPage = function() {
+		$$(".button.voice").each(function( index ) {
+  			$$(this).on('click',function(){
+				microphoneManager.toggleRecording($$(this).attr("name"));
+			});
+		});
+		$$(".button.play").each(function( index ) {
+  			$$(this).on('click',function(){
+				microphoneManager.togglePlay($$(this).attr("name"));
+			});
+		});
+	};
+	
+	this.renderQuestions = function(type,ID,labelData){
+		var HTML = "";
+		switch(type)
+		{
+			case "Recording":
+				HTML = "<div class='fileContainer Recording' name='q"+ID+"' data-value=''>";
+				HTML += "	<div class='optionContainer'>";
+				HTML += "		<div id='record' class='button voice' name='q"+ID+"'></div>";
+				HTML += "		<p class='label'>Start recording</p>";
+				HTML += "	</div>";
+				HTML += "	<div class='optionContainer'>";
+				HTML += "		<div id='playRecord' class='button play' name='q"+ID+"' style='opacity: 0.6;'></div>";
+				HTML += "		<p class='label'>Play</p>";
+				HTML += "	</div>";
+				HTML += "</div>";
+			break;
+		}
+		return HTML;
+	};
+	
+	this.validate = function(type,ID,required,rID){
+		var info = {};
+		info.val = "";
+		info.error = false;
+		info.checked = false;
+		
+		switch(type)
+		{
+			case "Recording":
+				audioURI = $$(".fileContainer[name='"+ID+"']").attr("data-value");
+				if(audioURI !== "")
+				{
+					$$(".fileContainer[name='"+ID+"']").removeClass("required");
+					info.val = survey.saveFile(ID,"audio",rID);
+				}
+				else if(required === "1")
+				{
+					$$(".fileContainer[name='"+ID+"']").addClass("required");
+					info.error = true;
+				}
+				info.checked = true;
+			break;
+		}
+		return info;
+	};
+	
+	//module specific functions
 	this.toggleRecording = function(qID){
 		if(!microphoneManager.recording)
 		{
@@ -141,3 +202,4 @@ var microphoneManager = new function()
 	};
 	
 }
+modules.push(microphoneManager);
