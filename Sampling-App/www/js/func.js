@@ -16,6 +16,7 @@
 */
 function init()
 {
+	survey.init();
 	microphoneManager.init();
 	
 	//Handle notifications
@@ -158,10 +159,16 @@ function autorizeUser()
 				{
 					//correct login information, proceed using the app.
 					storage.setItem("Uid",data[1]);
-					storage.setItem("login","true");
 					storage.setItem("messages", "0");
 					storage.setItem("readMessages", "0");
-					view.router.loadPage('menu.html');
+					if(data[2] === "1")
+					{
+						//this is a temporary password, let the user change it.
+						view.router.loadPage('resetpassword.html');
+					} else {
+						storage.setItem("login","true");
+						view.router.loadPage('menu.html');
+					}
 				}
 				else
 				{
@@ -169,7 +176,7 @@ function autorizeUser()
 					myApp.alert("Please try again.","Wrong username and/or password");
 				}
 			},
-			error(xhr,status,error){
+			error: function(xhr,status,error){
 				//server does not respond.
 				myApp.alert("Please make sure you have an internet connection to register an account.","No internet connection");
 			}
@@ -184,22 +191,24 @@ function registerUser()
 {
 	//get user input
 	user = $$("input#r_username").val();
+	email = $$("input#r_email").val();
 	pass = $$("input#r_password").val();
 	r_pass = $$("input#rr_password").val();
 	
 	//check if something is filled in, and is correct
-	if(user && pass && r_pass && pass === r_pass)
+	if(user && email && pass && r_pass && pass === r_pass)
 	{
 		//first get a token for the device
 		window.FirebasePlugin.getToken(function(token) {
 			
 			//retrieve input again
-			user = $$("input#r_username").val();
-			pass = $$("input#r_password").val();
+			user 	= $$("input#r_username").val();
+			email 	= $$("input#r_email").val();
+			pass 	= $$("input#r_password").val();
 			
 			//send it to the server to register
 			$$.ajax({
-				url:WEB_BASE+"createUser.php"+AUTORIZATION+"&appUser="+user+"&appPass="+pass+"&token="+token,
+				url:WEB_BASE+"createUser.php"+AUTORIZATION+"&appUser="+user+"&appEmail="+email+"&appPass="+pass+"&token="+token,
 				success: function(result){
 					//data retrieved, see what it contains..
 					var data = result.split("::");
@@ -215,11 +224,11 @@ function registerUser()
 					}
 					else
 					{
-						//username already exists, user has to choose another one.
-						myApp.alert("Username already exists, please choose another one.","Cannot create user");
+						//username or email already exists, user has to choose another one.
+						myApp.alert("Username or email already exists, please choose another one.","Cannot create user");
 					}
 				},
-				error(xhr,status,error){
+				error: function(xhr,status,error){
 					//server does not respond.
 					myApp.alert("Please make sure you have an internet connection to register an account.","No internet connection");
 				}
@@ -229,6 +238,84 @@ function registerUser()
 			//server does not respond.
 			myApp.alert("Please make sure you have an internet connection to register an account.","No internet connection");
 		});
+	}
+}
+
+/*
+	Recover Password
+*/
+function resetPassword()
+{
+	//get user input
+	pass = $$("form#resetPassword input#password").val();
+	r_pass = $$("form#resetPassword input#r_password").val();
+	
+	//check if passwords are the same
+	if(pass === r_pass)
+	{
+		$$.ajax({
+			url:WEB_BASE+"resetPassword.php"+AUTORIZATION+"&UID="+storage.getItem("Uid")+"&appPass="+pass,
+			success: function(result){
+				//data retrieved, see what it contains..
+				var data = result.split("::");
+				if(data[0]==="true")
+				{
+					//password has been reset
+					myApp.alert("Thank you, your password has been changed.","Your password is changed");
+					storage.setItem("login","true");
+					view.router.loadPage('menu.html');
+				}
+				else
+				{
+					//for some reason the database was not updated.
+					myApp.alert("Please, try again.","Something went wrong");
+				}
+			},
+			error: function(xhr,status,error){
+				//server does not respond.
+				myApp.alert("Please make sure you have an internet connection .","No internet connection");
+			}
+		});
+	} else {
+		myApp.alert("Please make sure both fields contain the same password.","Passwords do not match");
+	}
+}
+
+/*
+	Recover Password
+*/
+function recoverPassword()
+{
+	//get user input
+	r_email = $$("input#recovery_email").val();
+	
+	//check if something is filled in, and is correct
+	if(r_email)
+	{
+		$$.ajax({
+			url:WEB_BASE+"resetUser.php"+AUTORIZATION+"&appEmail="+r_email,
+			success: function(result){
+				//data retrieved, see what it contains..
+				var data = result.split("::");
+				if(data[0]==="true")
+				{
+					//password has been reset, notify user
+					view.router.back();
+					myApp.alert("A new password is send to your email adress.","We found your account!");
+				}
+				else
+				{
+					//email adres is not found.
+					myApp.alert("Please fill in a valid email adress to reset your password.","No user found");
+				}
+			},
+			error: function(xhr,status,error){
+				//server does not respond.
+				myApp.alert("Please make sure you have an internet connection to register an account.","No internet connection");
+			}
+		});
+	} else {
+		myApp.alert("Please fill in a valid email adress to reset your password.","No user found");
 	}
 }
 

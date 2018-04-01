@@ -16,35 +16,23 @@
 require 'php/Config.php';
 require 'php/Autorize.php';
 require_once 'php/Utilities.php';
+
 if(Autorize::check())
 {
 	//connect to database
 	$db = new Database();
 	
 	//get filled in credentials
-	$a_user = Utilities::stringFormat(Utilities::getAndSanitize('appUser'));
-	$a_pass = Utilities::getAndSanitize('appPass');
-
-	$result = $db->query("SELECT Uid, Password, Tmp FROM Users WHERE Username = {$a_user} LIMIT 1");
+	$Uid  = Utilities::stringFormat(Utilities::getAndSanitize('UID'));
+	$pass = Utilities::getAndSanitize('appPass');
+	$pass = Utilities::stringFormat(password_hash($pass, PASSWORD_DEFAULT));
 	
-	if ($result->num_rows > 0) {
-		while($row = $result->fetch_assoc()) {
-			if(password_verify($a_pass, $row['Password']))
-			{
-				//correct username and password
-				echo "true::".$row['Uid']."::".$row['Tmp'];
-				
-				//update token to the right device
-				$a_token = Utilities::stringFormat(Utilities::getAndSanitize('token'));
-				$db->query("UPDATE Users SET Token = {$a_token} WHERE Username = {$a_user}");
-			}
-			else
-			{
-				//wrong password
-				echo "false::Wrong password";
-			}
-		}
-	} else echo "false::Wrong username";
+	$result = $db->query("UPDATE Users SET Tmp = 0, Password = {$pass} WHERE Uid = {$Uid} LIMIT 1");
+	
+	if($result === TRUE)
+	{
+		echo "true";
+	} else echo "false";
 	
 	//close database
 	$db->close();

@@ -1,6 +1,6 @@
 <?php
 /**
- * Experience Sampling Web-interface 1.0.0
+ * Experience Sampling Web-interface 1.0.1
  * This backend allows researchers to conduct surveys remotely using the mobile phone on Android and iOS.
  * 
  * This app is developed by BOSONIC.design in assignment of the department 
@@ -24,7 +24,7 @@ if(Autorize::check())
 	//retrieve metadata of response
 	$UID = Utilities::getAndSanitize('UID');
 	$start_date = Utilities::stringFormat(Utilities::getAndSanitize('sd'));
-	$end_date   = Utilities::stringFormat(date("Y-m-d H:i:s"));
+	$end_date   = Utilities::stringFormat(Utilities::getAndSanitize('ed'));
 
 	//insert response
 	$result = $db->query("INSERT INTO Responses(Uid,StartDate,EndDate) VALUES (".$UID.",".$start_date.",".$end_date.")");

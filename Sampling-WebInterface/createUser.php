@@ -1,6 +1,6 @@
 <?php
 /**
- * Experience Sampling Web-interface 1.0.0
+ * Experience Sampling Web-interface 1.0.1
  * This backend allows researchers to conduct surveys remotely using the mobile phone on Android and iOS.
  * 
  * This app is developed by BOSONIC.design in assignment of the department 
@@ -11,6 +11,10 @@
  * 
  * Released on: March, 2018
  */
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 //Check if incoming request is valid
 require 'php/Config.php';
@@ -23,16 +27,19 @@ if(Autorize::check())
 	
 	//get filled in credentials
 	$a_user = Utilities::stringFormat(Utilities::getAndSanitize('appUser'));
-	$a_pass = Utilities::stringFormat(Utilities::getAndSanitize('appPass'));
+	$a_email = Utilities::stringFormat(Utilities::getAndSanitize('appEmail'));
 	$a_token = Utilities::stringFormat(Utilities::getAndSanitize('token'));
 	
-	$result = $db->query("INSERT INTO Users(Username,Password,Token) VALUES (".$a_user.",".$a_pass.",".$a_token.")");
+	$a_pass = Utilities::getAndSanitize('appPass');
+	$a_pass = Utilities::stringFormat(password_hash($a_pass, PASSWORD_DEFAULT));
+	
+	$result = $db->query("INSERT INTO Users(Username,Email,Password,Token) VALUES (".$a_user.",".$a_email.",".$a_pass.",".$a_token.")");
 	
 	if($result === TRUE)
 	{
 		$UID = $db->lastID();
 		echo "true::".$UID;
-	} else echo "false::Username already taken";
+	} else echo "false::username";
 	
 	//close database
 	$db->close();

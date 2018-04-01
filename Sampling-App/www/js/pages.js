@@ -15,16 +15,12 @@
 //-------------------INITIALIZING APP------------//
 //This code will be executed when launching the app.
 
-// Initialize app variables
-var myApp = new Framework7();
-var storage = window.localStorage;
-var $$ = Dom7;
-var view = myApp.addView('.view-main', {dynamicNavbar: true, swipeback: false});
-
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
 	
 	document.addEventListener("backbutton", onBackKeyDown, false);
+	document.addEventListener("online", survey.uploadResponses, false);
+	
 	// Check if user is logged in and send him to menu.html...
 	if(storage.getItem("login") === "true")	view.router.loadPage({url: 'menu.html', animatePages: false});
 	else
@@ -101,19 +97,18 @@ myApp.onPageInit('messages', function (page) {
 myApp.onPageAfterAnimation('survey', function (page) {
 	
 	//only allow people to take a survey when an internet connection is present.
-	if(navigator.connection.type !== Connection.NONE)
-	{
+	//if(navigator.connection.type !== Connection.NONE)
+	//{
 		//start survey
 		var date = new Date();
 		survey.startdate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 		survey.retrieveQuestions();
 		
-	} else {
+	//} else {
 		//notify user that they should have an internet connection in order to take a survey.
-		myApp.alert("Please, make sure you have an internet connection to take the survey.","No internet connection");
-		view.router.back({'url': 'menu.html', 'force': true});
-		
-	}
+		//myApp.alert("Please, make sure you have an internet connection to take the survey.","No internet connection");
+		//view.router.back({'url': 'menu.html', 'force': true});	
+	//}
 	
 });
 

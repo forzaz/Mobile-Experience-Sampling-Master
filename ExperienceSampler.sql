@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.7
+-- version 4.7.9
 -- https://www.phpmyadmin.net/
 --
--- Host: surveyhti.db
--- Generation Time: Feb 25, 2018 at 05:09 PM
+-- Host: ExperienceSampler.db
+-- Generation Time: Apr 01, 2018 at 02:58 PM
 -- Server version: 10.2.10-MariaDB-10.2.10+maria~xenial
 -- PHP Version: 7.1.11-nfsn1
 
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `surveyhti`
+-- Database: `ExperienceSampler`
 --
 
 -- --------------------------------------------------------
@@ -86,7 +86,9 @@ CREATE TABLE `Responses` (
 CREATE TABLE `Users` (
   `Uid` int(11) NOT NULL,
   `Username` varchar(20) NOT NULL,
-  `Password` varchar(20) NOT NULL,
+  `Email` varchar(60) NOT NULL,
+  `Password` varchar(255) NOT NULL,
+  `Tmp` tinyint(1) NOT NULL DEFAULT 0,
   `Token` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -119,7 +121,8 @@ ALTER TABLE `Responses`
 --
 ALTER TABLE `Users`
   ADD PRIMARY KEY (`Uid`),
-  ADD UNIQUE KEY `Username` (`Username`);
+  ADD UNIQUE KEY `Username` (`Username`),
+  ADD UNIQUE KEY `Email` (`Email`);
 
 --
 -- AUTO_INCREMENT for dumped tables

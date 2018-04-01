@@ -14,6 +14,7 @@
     <allow-intent href="geo:*" />
     <allow-intent href="mailto:*" />
     <platform name="android">
+		<hook src="fixFirebasePlugin.js" type="after_platform_add" />
         <allow-intent href="market:*" />
         <access origin="http://yourweb.com" />
     </platform>

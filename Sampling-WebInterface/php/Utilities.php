@@ -13,6 +13,7 @@
  */
 
 class Utilities{
+	
 	/*
 		This function return sanitized $_GET variable from the URL string,
 		or false when the variable does not exist.
