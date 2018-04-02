@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: ExperienceSampler.db
--- Generation Time: Apr 01, 2018 at 02:58 PM
+-- Generation Time: Apr 02, 2018 at 10:31 PM
 -- Server version: 10.2.10-MariaDB-10.2.10+maria~xenial
 -- PHP Version: 7.1.11-nfsn1
 
@@ -33,6 +33,22 @@ CREATE TABLE `Answers` (
   `Rid` int(11) NOT NULL,
   `Value` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Messages`
+--
+
+CREATE TABLE `Messages` (
+  `Mid` int(11) NOT NULL,
+  `Date` timestamp NULL DEFAULT NULL,
+  `Content` text NOT NULL,
+  `Uid` int(11) DEFAULT NULL COMMENT 'Optional, if this message is intended for all users.',
+  `AllUsers` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Set to ''1'' to make this message appear for all users.',
+  `RetrievedBy` text DEFAULT NULL,
+  `ReadBy` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -104,6 +120,13 @@ ALTER TABLE `Answers`
   ADD KEY `Answers_fk1` (`Rid`);
 
 --
+-- Indexes for table `Messages`
+--
+ALTER TABLE `Messages`
+  ADD PRIMARY KEY (`Mid`),
+  ADD UNIQUE KEY `Uid` (`Uid`);
+
+--
 -- Indexes for table `Questions`
 --
 ALTER TABLE `Questions`
@@ -127,6 +150,12 @@ ALTER TABLE `Users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `Messages`
+--
+ALTER TABLE `Messages`
+  MODIFY `Mid` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `Questions`
@@ -156,6 +185,12 @@ ALTER TABLE `Users`
 ALTER TABLE `Answers`
   ADD CONSTRAINT `Answers_fk0` FOREIGN KEY (`Qid`) REFERENCES `Questions` (`Qid`),
   ADD CONSTRAINT `Answers_fk1` FOREIGN KEY (`Rid`) REFERENCES `Responses` (`Rid`);
+
+--
+-- Constraints for table `Messages`
+--
+ALTER TABLE `Messages`
+  ADD CONSTRAINT `Messages_fk0` FOREIGN KEY (`Uid`) REFERENCES `Users` (`Uid`);
 
 --
 -- Constraints for table `Responses`

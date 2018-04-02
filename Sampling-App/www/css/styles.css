@@ -210,6 +210,10 @@ h1{
 	display: block;
 }
 
+.messageBlock.new p.content{
+	background-color: #0066CC;
+}
+
 /*---------survey inputs---------*/
 form *{
 	box-sizing:border-box;

@@ -19,6 +19,7 @@
 $$(document).on('deviceready', function() {
 	
 	document.addEventListener("backbutton", onBackKeyDown, false);
+	document.addEventListener("resume", onResume, false);
 	document.addEventListener("online", survey.uploadResponses, false);
 	
 	// Check if user is logged in and send him to menu.html...
@@ -54,62 +55,25 @@ myApp.onPageInit('menu', function (page) {
 	view.showNavbar(false);
 	$$('#logout').on('click', logout);
 	init();
-	
-	if(storage.getItem("messages") !== storage.getItem("readMessages"))
-	{
-		var n = storage.getItem("messages");
-		var m = storage.getItem("readMessages");
-		var d = Number(n)-Number(m);
-		$$('#readMessages').html(d);
-		$$('#readMessages').css('visibility','visible');
-	}
+	CheckMessages();
+	UpdateMenuPage();
 });
 myApp.onPageBeforeAnimation('menu', function (page) {
 	if(storage.getItem("messages") === storage.getItem("readMessages")) $$('#readMessages').css('visibility','hidden');
+	CheckMessages();
 });
 
 //MESSAGES---------------------------
 myApp.onPageInit('messages', function (page) {
-	
-	//check if messages are stored
-	if(storage.getItem("messages") !== "0")
-	{
-		//iterate over stored messages to put them in HTML
-		var html = "";
-		var n = storage.getItem("messages");
-		for(i = 0; i < Number(n); i++)
-		{
-			var message = storage.getItem("message"+i).split("::");
-			var messageString = "<div class='messageBlock'><p class='time'>"+message[0]+"</p><p class='content'>"+message[1]+"</p></div>";
-			html = messageString+html;
-		}
-		
-		//display messages
-		$$('#NoMessages').hide();
-		$$(".page[data-page='messages'] .content-block").html(html);
-	}
-	
-	//set messages as read
-	storage.setItem("readMessages", storage.getItem("messages"));
+	UpdateMessagePage();
 });
 
 //SURVEY-----------------------------
 myApp.onPageAfterAnimation('survey', function (page) {
-	
-	//only allow people to take a survey when an internet connection is present.
-	//if(navigator.connection.type !== Connection.NONE)
-	//{
-		//start survey
-		var date = new Date();
-		survey.startdate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
-		survey.retrieveQuestions();
-		
-	//} else {
-		//notify user that they should have an internet connection in order to take a survey.
-		//myApp.alert("Please, make sure you have an internet connection to take the survey.","No internet connection");
-		//view.router.back({'url': 'menu.html', 'force': true});	
-	//}
-	
+	//start survey
+	var date = new Date();
+	survey.startdate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+	survey.retrieveQuestions();
 });
 
 //ANDROID BACK KEY NAVIGATION-----------
@@ -129,4 +93,10 @@ function onBackKeyDown()
 			navigator.app.exitApp();
 		break;
 	}
+}
+
+//CORDOVA RESUME APPLICATION-----------
+function onResume()
+{
+	if(view.activePage.name == "menu") CheckMessages();
 }
