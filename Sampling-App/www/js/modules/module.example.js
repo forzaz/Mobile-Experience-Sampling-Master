@@ -15,7 +15,8 @@ var exampleManager = new function()
 	};
 	
 	/*
-		Is called after questions are rendered to add extra functionality
+		Is called after questions are rendered to add extra functionality.
+		Check "camera.js" for an example in how you can use it.
 	*/
 	this.initOnPage = function() {
 		//do something
@@ -26,10 +27,9 @@ var exampleManager = new function()
 		- @var type = question type to be rendered
 		- @var ID = unique ID of the question to indentify it
 		- @var labelData = label data to make input fit the question
-		- @var rID = response ID of offline database (for saving external information, like files)
 		- @return HTML = HTML of the rendered question to be displayed in the survey
 	*/
-	this.renderQuestions = function(type,ID,labelData,rID){
+	this.renderQuestions = function(type,ID,labelData){
 		var HTML = "";//variable to save HTML content
 		
 		//check for question type
@@ -50,12 +50,13 @@ var exampleManager = new function()
 		- @var type = question type to be rendered
 		- @var ID = unique ID of the question to indentify it
 		- @var required = indentifies if question is required as "0" (not required) or "1" (required)
+		- @var rID = response ID of offline database (for saving external information, like files)
 		- @return info = information object containing validation information; 
 				val = value of input
 				error = if there is a problem with the input
 				checked = if question is checked within this module.
 	*/
-	this.validate = function(type,ID,required){
+	this.validate = function(type,ID,required,rID){
 		
 		//create info object
 		var info = {};
