@@ -91,21 +91,8 @@ myApp.onPageInit('survey', function (page) {
 
 //SETUP-----------------------------
 myApp.onPageAfterAnimation('setup', function (page) {
-	
-	//only allow people to take a survey when an internet connection is present.
-	if(navigator.connection.type !== Connection.NONE)
-	{
-		//start survey
-		var date = new Date();
-		setup.startdate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
-		setup.retrieveQuestions();
-		
-	} else {
-		//notify user that they should have an internet connection in order set up the app.
-		myApp.alert("Please, make sure you have an internet connection to set up the app.","No internet connection");
-		view.router.back();
-	}
-	
+	//start setup
+	setup.retrieveQuestions();
 });
 
 //ANDROID BACK KEY NAVIGATION-----------
