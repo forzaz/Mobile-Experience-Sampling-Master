@@ -74,7 +74,9 @@ var cameraManager = new function()
 				if(imageURI !== "")
 				{
 					$$(".fileContainer[name='"+ID+"']").removeClass("required");
-					info.val = survey.saveFile(ID,"img",rID);
+					if (rID !== "") {
+						info.val = survey.saveFile(ID,"img",rID);
+					}
 				}
 				else if(required === "1")
 				{
