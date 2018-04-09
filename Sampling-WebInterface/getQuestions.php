@@ -26,6 +26,7 @@ if(Autorize::check())
 		// output data of each row
 		while($row = $result->fetch_assoc()) {
 			echo $row["Qid"] . "::";
+			echo $row["Qname"] . "::";
 			echo $row["Question"] . "::";
 			echo $row["Type"] . "::";
 			
@@ -33,6 +34,8 @@ if(Autorize::check())
 			echo ($temp == "" ? '0' : $row["Labels"]);
 			
 			echo "::" . $row["Required"];
+			echo "::" . $row["Frequency"];
+			echo "::" . $row["Page"];
 			echo "<br/>";
 		}
 	}
