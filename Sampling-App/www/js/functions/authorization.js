@@ -81,8 +81,8 @@ function registerUser()
 						storage.setItem("login","true");
 						storage.setItem("messages", "0");
 						storage.setItem("readMessages", "0");
-						view.router.loadPage('menu.html');
-						myApp.alert("Thank you for registering.","You are registered!");
+						view.router.loadPage('setup.html');
+						myApp.alert("Thank you for registering. Now please take some time to set up the app!","You are registered!");
 					}
 					else
 					{
@@ -186,8 +186,9 @@ function recoverPassword()
 */
 function logout(){
 	//clear cache information
-	storage.clear();
-	cordova.plugins.notification.local.clearAll(unScheduleNotifications);
+	//storage.clear();
+	storage.setItem("login","false");
+	//cordova.plugins.notification.local.clearAll(unScheduleNotifications);
 	
 	//return to index page.
 	view.hideNavbar(true);
