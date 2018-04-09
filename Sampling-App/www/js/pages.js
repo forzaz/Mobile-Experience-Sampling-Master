@@ -1,5 +1,5 @@
 /**
- * Experience Sampling App 1.0.1
+ * Experience Sampling App 1.0.0
  * This app allows researchers to conduct surveys remotely using the mobile phone on Android and iOS.
  * 
  * This app is developed by BOSONIC.design in assignment of the department 
@@ -8,7 +8,7 @@
  * info@bosonic.design || http://www.bosonic.design/
  * hti@tue.nl || https://www.tue.nl/en/university/departments/industrial-engineering-innovation-sciences/research/research-groups/human-technology-interaction/
  * 
- * Released on: April, 2018
+ * Released on: March, 2018
  */
 
 
@@ -21,11 +21,15 @@ $$(document).on('deviceready', function() {
 	document.addEventListener("backbutton", onBackKeyDown, false);
 	document.addEventListener("resume", onResume, false);
 	document.addEventListener("online", survey.uploadResponses, false);
-	
 	// Check if user is logged in and send him to menu.html...
-	if(storage.getItem("login") === "true")	view.router.loadPage({url: 'menu.html', animatePages: false});
+	//alert(storage.login);
+	if(storage.getItem("login") === "true")	{
+		view.router.loadPage({url: 'menu.html', animatePages: false});
+		//alert("1");
+	}
 	else
 	{
+		//alert("2");
 		// Or allow the user to log in.
 		view.hideNavbar(false);
 		$$(".initializer").css("display","none");
@@ -53,6 +57,7 @@ myApp.onPageBack('register forget_password', function (page) {
 //MAIN MENU---------------------------
 myApp.onPageInit('menu', function (page) {
 	view.showNavbar(false);
+	storage.setItem("surveyPage", 1);
 	$$('#logout').on('click', logout);
 	init();
 	CheckMessages();
@@ -74,6 +79,33 @@ myApp.onPageAfterAnimation('survey', function (page) {
 	var date = new Date();
 	survey.startdate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 	survey.retrieveQuestions();
+});
+
+myApp.onPageInit('survey', function (page) {
+	//this is for survey at the seond or later pages
+	if (storage.surveyPage != 1) {
+		//start survey
+		survey.retrieveQuestions();
+	}
+});
+
+//SETUP-----------------------------
+myApp.onPageAfterAnimation('setup', function (page) {
+	
+	//only allow people to take a survey when an internet connection is present.
+	if(navigator.connection.type !== Connection.NONE)
+	{
+		//start survey
+		var date = new Date();
+		setup.startdate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+		setup.retrieveQuestions();
+		
+	} else {
+		//notify user that they should have an internet connection in order set up the app.
+		myApp.alert("Please, make sure you have an internet connection to set up the app.","No internet connection");
+		view.router.back();
+	}
+	
 });
 
 //ANDROID BACK KEY NAVIGATION-----------
