@@ -82,7 +82,9 @@ var microphoneManager = new function()
 				if(audioURI !== "")
 				{
 					$$(".fileContainer[name='"+ID+"']").removeClass("required");
-					info.val = survey.saveFile(ID,"audio",rID);
+					if (rID !== "") {
+						info.val = survey.saveFile(ID,"audio",rID);
+					}
 				}
 				else if(required === "1")
 				{
