@@ -19,13 +19,18 @@ var survey = new function() {
 	
 	//SQL database for saving information
 	this.db = null;
+
+	//index of the last page of survey
+	this.lastPage = null;
 	
 	/*
 		This function needs to be executed everytime the users opens the app.
 		It will initialize the database and upload offline responses if these exist.
 	*/
 	this.init = function(){
+		alert("before sql");
 		survey.db = window.sqlitePlugin.openDatabase({name: 'data.db', location: 'default'}, function (db) {
+			alert("in sql");
 			db.executeSql('CREATE TABLE IF NOT EXISTS Questions (Qid, Qname, Question, Type, Labels, Required, Frequency, Page)');
 			db.executeSql('CREATE TABLE IF NOT EXISTS Responses (Rid, SerializedString, StartDate, EndDate, Required)');
 			db.executeSql('CREATE TABLE IF NOT EXISTS Uploads   (Rid, Name, Format, Uri)');
@@ -55,9 +60,9 @@ var survey = new function() {
 				success: function(results){
 					
 					//Empty offline saved questions
-					survey.db.transaction(function (db) {
-						db.executeSql("DELETE FROM Questions");
-					});
+					//survey.db.transaction(function (db) {
+						//db.executeSql("DELETE FROM Questions");
+					//});
 					
 					survey.renderQuestions(results);
 				},
@@ -118,6 +123,10 @@ var survey = new function() {
 		
 	*/
 	this.renderQuestions = function(result){
+		//Empty offline database before the it is updated (either from server or the extracted local results)
+		survey.db.transaction(function (db) {
+			db.executeSql("DELETE FROM Questions");
+		});
 		var HTML = '';
 		var labels;
 		var query = "INSERT INTO Questions (Qid, Qname, Question, Type, Labels, Required, Frequency, Page) VALUES (?,?,?,?,?,?,?,?)"; 
@@ -125,7 +134,7 @@ var survey = new function() {
 		$$(".messageOverlay span").html("Rendering questions...");
 		
 		//get parameters for the questions and loop over them.
-		var lastPage = 1;
+		survey.lastPage = 1;
 		var questions = result.split("<br/>");
 
 		questions.pop();
@@ -146,8 +155,8 @@ var survey = new function() {
 			});
 
 			//update the index of the last page
-			if ((parseInt(data[7]) > lastPage) && renderQuestion(data[0], data[6])) {
-				lastPage = parseInt(data[7]);
+			if ((parseInt(data[7]) > survey.lastPage) && renderQuestion(data[0], data[6])) {
+				survey.lastPage = parseInt(data[7]);
 			}
 			
 			//check if question has to be rendered
@@ -182,7 +191,7 @@ var survey = new function() {
 		if (HTML != "") {
 
 			//check if the current page is the last page (whether a submit button should be used)
-			if (storage.surveyPage == lastPage) {
+			if (storage.surveyPage == survey.lastPage) {
 				HTML += "<div id='footer'>";
 				HTML += "	<div id='survey_submit' class='button'>Submit</div>";
 				HTML += "</div>";
@@ -207,7 +216,7 @@ var survey = new function() {
 			});
 		} else {
 			//if no questions to be shown on the current page, go to the next page
-			survey.nextpage;
+			survey.nextpage();
 		}
 		
 		//clear loading screen
@@ -244,6 +253,7 @@ var survey = new function() {
 					}
 				}
 				Rid = Rid.toString();
+				alert("Rid="+Rid);
 				
 				//serialize form information
 				survey.serialize(Rid,function(results){
@@ -252,22 +262,27 @@ var survey = new function() {
 
 						var enddate = "";
 						//if it's the last page, get the current date as enddate
-						if (storage.surveyPage == lastPage) {
+						if (storage.surveyPage == survey.lastPage) {
 							var date = new Date();
 							enddate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds(); 
 						}
+
+						alert("after serialize");
 						
 						//save response in offline database
 						//if it's the first page, then insert a new response record
 						if (storage.surveyPage == 1) {
+							alert("first page");
 							survey.db.transaction(function (db) {
 								db.executeSql("INSERT INTO Responses (Rid, SerializedString, StartDate, EndDate) VALUES (?,?,?,?)",[Rid, results, survey.startdate, enddate], function(db,results){
 									//response is saved, continue app
 									$$(".messageOverlay").css("display","none");
 									//myApp.alert("Your response is saved.","Thank you!");
-									survey.nextpage;
+									alert("save completed");
+									survey.nextpage();
 									
 								}, function(error){
+									alert("save error");
 									//there is something wrong with the input - unkown error
 									
 									//delete file information
@@ -280,14 +295,17 @@ var survey = new function() {
 								});
 							});
 						} else {
+							alert("other pages");
 							survey.db.transaction(function (db) {
 								db.executeSql("UPDATE Responses SET SerializedString = ?, EndDate = ? WHERE Rid = ?",[lastString+results, enddate, Rid], function(db,results){
 									//response is saved, continue app
 									$$(".messageOverlay").css("display","none");
 									//myApp.alert("Your response is saved.","Thank you!");
+									alert("after update");
 
 									//determine whether this is the last page of survey
-									if (storage.surveyPage == lastPage) {
+									if (storage.surveyPage == survey.lastPage) {
+										alert("lastPage");
 										//if yes, then go back to the menu page
 										if(navigator.connection.type !== Connection.NONE) {
 											survey.uploadResponses();
@@ -297,13 +315,15 @@ var survey = new function() {
 										}
 										view.router.loadPage('menu.html');
 									} else {
+										alert("not last page");
 										//if no, then go to the next page of survey
-										survey.nextpage;
+										survey.nextpage();
 									}
 									
 								}, function(error){
 									//there is something wrong with the input - unkown error
 									
+									alert("save error2");
 									//delete file information
 									survey.db.transaction(function (db) {
 										db.executeSql("DELETE FROM Uploads WHERE Rid = ?",[Rid]);
@@ -324,7 +344,7 @@ var survey = new function() {
 						});
 						
 						$$(".messageOverlay").css("display","none");
-						myApp.alert("Pleae make sure you answer all the required questions (indicated in red).","Not all questions are answered");
+						myApp.alert("Please make sure you answer all the required questions (indicated in red).","Not all questions are answered");
 					}
 				});
 				
@@ -340,7 +360,7 @@ var survey = new function() {
 		view.router.reloadPage('survey.html');
 		//survey.retrieveQuestions();
 
-	}
+	};
 	
 	/*
 		Goes through all the questions and prepares a qID-value string to be send to the server.
@@ -351,7 +371,7 @@ var survey = new function() {
 		
 		//get question data
 		survey.db.transaction(function (db) {
-			db.executeSql("SELECT Qid, Type, Required, Frequency FROM Questions",[], function(db,questions){
+			db.executeSql("SELECT Qid, Type, Required, Frequency, Page FROM Questions",[], function(db,questions){
 				
 				var string = "";
 				var returnFalse = false;
@@ -360,40 +380,43 @@ var survey = new function() {
 				//if a question does not have an answer, but is required, returnFalse will be true.
 				for(var x = 0; x < questions.rows.length; x++) {
 					var q = questions.rows.item(x);
-					q.name = 'q'+q.Qid;
+					if(renderQuestion(q.Qid, q.Frequency) && (parseInt(q.Page) == parseInt(storage.surveyPage))) {
+						q.name = 'q'+q.Qid;
 
-					//save responses for questions of frequency "daily" in localStorage, in order to show them only once a day
-					switch(q.Frequency)
-					{
-						case "Daily":
-							var dateObject = new Date();
-							var now = dateObject.getTime();
-							//to count midnight hours as late evening of the previous day
-							var currentHour = dateObject.getHours(); 
-							if (currentHour <= 4) {
-								now -= (currentHour+1) * 60 * 60 * 1000
-								dateObject = new Date(now);
-							}
-							var key = q.name + "_" + dateObject.getFullYear() + "_" + (dateObject.getMonth()+1) + "_" +  dateObject.getDate();
-							storage.setItem(key, true);
-						break;
-					}
-					
-					var info = {};
-					info.val = "";
-					info.checked = false;
-					info.error = false;
-					
-					modules.forEach(function(module){
-						if (typeof module.validate === "function" && info.checked === false) {
-							info = module.validate(q.Type,q.name,q.Required,rID);
-							if(info.error) returnFalse = true;
+						//save responses for questions of frequency "daily" in localStorage, in order to show them only once a day
+						switch(q.Frequency)
+						{
+							case "Daily":
+								var dateObject = new Date();
+								var now = dateObject.getTime();
+								//to count midnight hours as late evening of the previous day
+								var currentHour = dateObject.getHours(); 
+								if (currentHour <= 4) {
+									now -= (currentHour+1) * 60 * 60 * 1000
+									dateObject = new Date(now);
+								}
+								var key = q.name + "_" + dateObject.getFullYear() + "_" + (dateObject.getMonth()+1) + "_" +  dateObject.getDate();
+								storage.setItem(key, true);
+							break;
 						}
-					});
-					
-					if(info.val === ""){ info.val = "Empty";}
-					string += "&"+q.name+"="+encodeURIComponent(info.val);
+						
+						var info = {};
+						info.val = "";
+						info.checked = false;
+						info.error = false;
+						
+						modules.forEach(function(module){
+							if (typeof module.validate === "function" && info.checked === false) {
+								info = module.validate(q.Type,q.name,q.Required,rID);
+								if(info.error) returnFalse = true;
+							}
+						});
+						
+						if(info.val === ""){ info.val = "Empty";}
+						string += "&"+q.name+"="+encodeURIComponent(info.val);
+					}
 				}
+				alert(string);
 				
 				//return false if a error is found, otherwise return the string with values
 				if(returnFalse) callBack(false);
