@@ -53,11 +53,6 @@ var survey = new function() {
 				url:WEB_BASE+"getQuestions.php"+AUTORIZATION,
 				success: function(results){
 					
-					//Empty offline saved questions
-					survey.db.transaction(function (db) {
-						db.executeSql("DELETE FROM Questions");
-					});
-					
 					survey.renderQuestions(results);
 				},
 				error: function(xhr,status,error){
@@ -117,6 +112,10 @@ var survey = new function() {
 		
 	*/
 	this.renderQuestions = function(result){
+		//Empty offline saved questions
+		survey.db.transaction(function (db) {
+			db.executeSql("DELETE FROM Questions");
+		});
 		var HTML = '';
 		var labels;
 		var query = "INSERT INTO Questions (Qid, Question, Type, Labels, Required) VALUES (?,?,?,?,?)";
