@@ -12,6 +12,10 @@
  * Released on: March, 2018
  */
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 //Check if incoming request is valid
 require 'php/Config.php';
 require 'php/Autorize.php';
@@ -37,11 +41,9 @@ if(Autorize::check())
 		
 		//send email
 		$subject = "Password reset";
-		$message = "We recieved the request to change your password on " . Conf::APP_NAME . ".<br/>
-					Your password has been changed to <strong>{$resetPass}</strong><br/><br/>
-					Login to change your password.";
+		$message = "We recieved the request to change your password on " . Conf::APP_NAME . ".\nYour password has been changed to {$resetPass}\n\nLogin to change your password.";
 		$headers[] = "MIME-Version: 1.0";
-		$headers[] = "Content-type: text/html; charset=iso-8859-1";
+		$headers[] = "Content-type: text/plain; charset=utf-8";
 		$headers[] = "From: " . Conf::APP_NAME . " <" . Conf::FROM_EMAIL . ">";
 		mail($a_email, $subject, $message, implode("\r\n", $headers));
 		

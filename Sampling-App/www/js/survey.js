@@ -23,14 +23,16 @@ var survey = new function() {
 	/*
 		This function needs to be executed everytime the users opens the app.
 		It will initialize the database and upload offline responses if these exist.
+		- @var callback = instead of checking the upload of questions, the offline database is initialized
 	*/
-	this.init = function(){
+	this.init = function(callback = null){
 		survey.db = window.sqlitePlugin.openDatabase({name: 'data.db', location: 'default'}, function (db) {
 			db.executeSql('CREATE TABLE IF NOT EXISTS Questions (Qid, Question, Type, Labels, Required)');
 			db.executeSql('CREATE TABLE IF NOT EXISTS Responses (Rid, SerializedString, StartDate, EndDate, Required)');
 			db.executeSql('CREATE TABLE IF NOT EXISTS Uploads   (Rid, Name, Format, Uri)');
 			
-			survey.uploadResponses();
+			if(typeof callback === "function") callback();
+			else survey.uploadResponses();
 		}, function(error){
 			myApp.alert("Something went wrong, please re-install the app.","Internal error");
 		});
@@ -38,8 +40,9 @@ var survey = new function() {
 	
 	/*
 		This function will retrieve the questionaire items and start rendering them accordingly to HTML.
+		- @var callback = instead of rendering the questions directly, the callback function will be called.
 	*/
-	this.retrieveQuestions = function(){
+	this.retrieveQuestions = function(callback = null){
 		
 		//Create loading screen
 		$$(".messageOverlay span").html("Loading question, wait a moment...");
@@ -50,7 +53,7 @@ var survey = new function() {
 		{
 			//We are online, retrieve questions from server
 			$$.ajax({
-				url:WEB_BASE+"getQuestions.php"+AUTORIZATION,
+				url:WEB_BASE+"questionaireGet.php"+AUTORIZATION,
 				success: function(results){
 					
 					//Empty offline saved questions
@@ -58,7 +61,20 @@ var survey = new function() {
 						db.executeSql("DELETE FROM Questions");
 					});
 					
-					survey.renderQuestions(results);
+					//Save the downloaded questions in the offline database
+					var query = "INSERT INTO Questions (Qid, Question, Type, Labels, Required) VALUES (?,?,?,?,?)";
+					var questions = results.split("<br/>");
+					questions.pop();
+					questions.forEach(function(question) {
+						var data = question.split("::");//get parameters; 0 = qID, 1 = question string, 2 = question type, 3 = labels, 4 = required boolean.
+						survey.db.transaction(function (db) {
+							db.executeSql(query,data);
+						});
+					});
+					
+					//callback
+					if(typeof callback === "function") callback();
+					else survey.renderQuestions(results);
 				},
 				error: function(xhr,status,error){
 					//server could not be reached, then get questions offline
@@ -114,12 +130,12 @@ var survey = new function() {
 	};
 	
 	/*
-		
+		This function renders the questions to the screen.
+		- @var result = string containing the question rendering information (to be seperated by '::').
 	*/
 	this.renderQuestions = function(result){
 		var HTML = '';
 		var labels;
-		var query = "INSERT INTO Questions (Qid, Question, Type, Labels, Required) VALUES (?,?,?,?,?)";
 		
 		$$(".messageOverlay span").html("Rendering questions...");
 		
@@ -129,32 +145,16 @@ var survey = new function() {
 		questions.pop();
 		questions.forEach(function(question) {
 			var data = question.split("::");//get parameters; 0 = qID, 1 = question string, 2 = question type, 3 = labels, 4 = required boolean.
-			
-			survey.db.transaction(function (db) {
-				db.executeSql(query,data,function(db,results){
-					//myApp.alert("Question added");
-				}, function(error){
-					myApp.alert("INSERT error: " + error.message);
-				}); 
-			}, function (error) {
-				myApp.alert('transaction error: ' + error.message);
-			}, function () {
-				//myApp.alert('transaction ok');
-			});
-			
 			//check if question has to be rendered
 			if(renderQuestion(data[0])){
 				
 				//render input
 				qHTML = "";
-				if(qHTML === "")
-				{
-					modules.forEach(function(module){
-						if (typeof module.renderQuestions === "function" && qHTML === "") {
-							qHTML = module.renderQuestions(data[2],data[0],data[3]);
-						}
-					});
-				}
+				modules.forEach(function(module){
+					if (typeof module.renderQuestions === "function" && qHTML === "") {
+						qHTML = module.renderQuestions(data[2],data[0],data[3]);
+					}
+				});
 				
 				if(qHTML === ""){
 					console.log("WARNING: Question type not found for q"+data[0]);
@@ -354,7 +354,7 @@ var survey = new function() {
 							
 							//start upload of response
 							$$.ajax({
-								url:WEB_BASE+"saveQuestions.php"+AUTORIZATION+survey.response(row.StartDate,row.EndDate)+row.SerializedString,
+								url:WEB_BASE+"questionaireSave.php"+AUTORIZATION+survey.response(row.StartDate,row.EndDate)+row.SerializedString,
 								success: function(result){
 									var data = result.split("::");
 
@@ -365,12 +365,14 @@ var survey = new function() {
 											
 											//Check for files
 											db.executeSql("SELECT * FROM Uploads WHERE Rid = ?",[row.Rid],function(db,results){
+												console.log("#rows: " + results.rows.length);
 												if(results.rows.length > 0)
 												{
 													//files found, upload them
 													var row;
 													for(var x = 0; x < results.rows.length; x++) {
 														row = results.rows.item(x);
+														console.log(row.Name + " " + row.Uri + " " + row.Format)
 														survey.uploadFile(row.Name,row.Uri,row.Format);
 													}
 													
@@ -454,10 +456,12 @@ var survey = new function() {
 		//send the file
 		var ft = new FileTransfer();
         ft.upload(
-			fileURI, WEB_BASE+"saveFiles.php"+AUTORIZATION+"&format="+format, 
+			fileURI, WEB_BASE+"questionaireSaveFiles.php"+AUTORIZATION+"&format="+format, 
 			function(result){
+				console.log("file is uploaded");
         		//alert('result : ' + JSON.stringify(result));
         	}, function(error){
+				console.log("error in upload");
         		//alert('error : ' + JSON.stringify(error));
 			}, options
 		);
