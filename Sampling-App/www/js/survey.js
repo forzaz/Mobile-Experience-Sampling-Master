@@ -56,6 +56,7 @@ var survey = new function() {
 				url:WEB_BASE+"questionaireGet.php"+AUTORIZATION,
 				success: function(results){
 					
+<<<<<<< HEAD
 					//Empty offline saved questions
 					survey.db.transaction(function (db) {
 						db.executeSql("DELETE FROM Questions");
@@ -75,6 +76,9 @@ var survey = new function() {
 					//callback
 					if(typeof callback === "function") callback();
 					else survey.renderQuestions(results);
+=======
+					survey.renderQuestions(results);
+>>>>>>> 3fedd718c14f927d0ac0f81b9ee6fb25f272e9a2
 				},
 				error: function(xhr,status,error){
 					//server could not be reached, then get questions offline
@@ -134,6 +138,10 @@ var survey = new function() {
 		- @var result = string containing the question rendering information (to be seperated by '::').
 	*/
 	this.renderQuestions = function(result){
+		//Empty offline saved questions
+		survey.db.transaction(function (db) {
+			db.executeSql("DELETE FROM Questions");
+		});
 		var HTML = '';
 		var labels;
 		
