@@ -56,7 +56,6 @@ var survey = new function() {
 				url:WEB_BASE+"questionaireGet.php"+AUTORIZATION,
 				success: function(results){
 					
-<<<<<<< HEAD
 					//Empty offline saved questions
 					survey.db.transaction(function (db) {
 						db.executeSql("DELETE FROM Questions");
@@ -76,9 +75,7 @@ var survey = new function() {
 					//callback
 					if(typeof callback === "function") callback();
 					else survey.renderQuestions(results);
-=======
-					survey.renderQuestions(results);
->>>>>>> 3fedd718c14f927d0ac0f81b9ee6fb25f272e9a2
+					
 				},
 				error: function(xhr,status,error){
 					//server could not be reached, then get questions offline
@@ -365,7 +362,6 @@ var survey = new function() {
 								url:WEB_BASE+"questionaireSave.php"+AUTORIZATION+survey.response(row.StartDate,row.EndDate)+row.SerializedString,
 								success: function(result){
 									var data = result.split("::");
-
 									if(data[0] === "success")
 									{
 										//awnsers are uploaded, next upload corresponding files.. if there are
@@ -373,14 +369,12 @@ var survey = new function() {
 											
 											//Check for files
 											db.executeSql("SELECT * FROM Uploads WHERE Rid = ?",[row.Rid],function(db,results){
-												console.log("#rows: " + results.rows.length);
 												if(results.rows.length > 0)
 												{
 													//files found, upload them
 													var row;
 													for(var x = 0; x < results.rows.length; x++) {
 														row = results.rows.item(x);
-														console.log(row.Name + " " + row.Uri + " " + row.Format)
 														survey.uploadFile(row.Name,row.Uri,row.Format);
 													}
 													
@@ -466,10 +460,8 @@ var survey = new function() {
         ft.upload(
 			fileURI, WEB_BASE+"questionaireSaveFiles.php"+AUTORIZATION+"&format="+format, 
 			function(result){
-				console.log("file is uploaded");
         		//alert('result : ' + JSON.stringify(result));
         	}, function(error){
-				console.log("error in upload");
         		//alert('error : ' + JSON.stringify(error));
 			}, options
 		);
