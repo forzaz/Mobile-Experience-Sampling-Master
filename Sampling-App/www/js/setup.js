@@ -139,7 +139,7 @@ var setup = new function() {
 			
 			if(info.val === ""){ info.val = "Empty";}
 			string += "&"+q.name+"="+encodeURIComponent(info.val);
-		}
+		});
 		
 		//return false if a error is found, otherwise return the string with values
 		if(returnFalse) callBack(false);
