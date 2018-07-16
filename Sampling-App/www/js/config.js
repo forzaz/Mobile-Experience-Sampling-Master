@@ -15,9 +15,9 @@
 
 //Provide login details for the webinterface that is connected to the server.
 //This allows the app to retrieve information.
-const USER_NAME 	= 'app_user_name'; 			//server interface username
-const PASSWORD 		= 'app_user_password'; 		//server interface password
-const WEB_BASE 		= 'http://yourweb.com'; 	//link to where the server interface is located
+const USER_NAME 	= 'sampleu'; 			//server interface username
+const PASSWORD 		= 'Welcome@HTI'; 		//server interface password
+const WEB_BASE 		= 'https://htionline.tue.nl/0ccb706d/SampleU/Karin/'; 	//link to where the server interface is located
 const AUTORIZATION 	= "?user="+USER_NAME+"&pass="+PASSWORD; 	//<-- no need to change
 
 //CAMERA MODULE CONFIG

@@ -73,7 +73,16 @@ myApp.onPageAfterAnimation('survey', function (page) {
 	//start survey
 	var date = new Date();
 	survey.startdate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+	if (typeof storage.surveyPage == "undefined") {
+		storage.setItem("surveyPage", 1);
+	}
 	survey.retrieveQuestions();
+});
+
+//SETUP-----------------------------
+myApp.onPageAfterAnimation('setup', function (page) {
+	//start setup
+	setup.retrieveQuestions();
 });
 
 //ANDROID BACK KEY NAVIGATION-----------

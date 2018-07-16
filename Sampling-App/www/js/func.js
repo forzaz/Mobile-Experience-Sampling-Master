@@ -25,7 +25,7 @@ function init()
 	});
 	
 	//Handle notifications
-	scheduleNotifications();
+	//scheduleNotifications();
 	cordova.plugins.notification.local.on('click', onLocalNotification, this);
 	
 	window.FirebasePlugin.hasPermission(function(data){
@@ -45,15 +45,29 @@ function init()
 	- @var qID = question ID for question specified in database.
 	- @return render = true or false depending if the question should be renderend; default = true.
 */
-function renderQuestion(qID){
+function renderQuestion(qID, qFrequency){
 	var render = true;
 	var date = new Date();//get date instance to know current timestamp.
-	switch(qID)
+	var now = date.getTime();
+	//to count midnight hours as late evening of the previous day
+	var currentHour = date.getHours();
+	if (currentHour <= 4) {
+		now -= (currentHour+1) * 60 * 60 * 1000
+		date = new Date(now);
+	}
+	switch(qFrequency)
 	{
-		case "31":
+		case "Weekend":
 			//Example: only show question with id=31 in the weekend
 			var day = date.getDay();//get the day; 0 = sunday, 6 = saturday
 			if(day === 0 || day === 6) render = false;
+			else render = true;
+		break;
+
+		case "Daily":
+			//Example: sleep diary to be shown only once a day
+			var key = "q"+ qID + "_" + date.getFullYear() + "_" + (date.getMonth()+1) + "_" + date.getDate();
+			if (storage.getItem(key)) render = false;
 			else render = true;
 		break;
 	}
@@ -64,21 +78,98 @@ function renderQuestion(qID){
 	Schedules local notifications with specific parameters.
 	Check https://github.com/katzer/cordova-plugin-local-notifications for more information.
 */
-function scheduleNotifications(){
+function scheduleNotifications(wakeupWeekday, sleepWeekday, wakeupWeekend, sleepWeekend){
 
-	cordova.plugins.notification.local.schedule([
-		{ id: 1, // give unique ID..
-			title: 'Fill out the morning survey!',// provide title..
-			trigger: { every: { hour: 13, minute: 0 } }, // everyday at 11:00...
-			smallIcon: 'res://calendar'
-		},
-		{ id: 2, 
-			title: 'Fill out the evening survey!',
-			trigger: { every: { hour: 22, minute: 0 } }, // and everyday at 22:00
-			smallIcon: 'res://calendar'
-		}
-	]);
+	var date1, date2, date3, date4, date5;
+	var interval1, interval2, interval3, interval4, interval5;
+	var a, b, c, d, e;
+
+	//Declare variables for present time
+	var dateObject = new Date();
+	var now = dateObject.getTime();
+	var dayOfWeek = dateObject.getDay(), currentHour = dateObject.getHours(), currentMinute = dateObject.getMinutes(); 
 	
+	//Extract data for wakeup and sleep time (to be changed to extract from data)
+	var wakeupHourWeekday = parseInt(wakeupWeekday.split(":")[0]);
+	var wakeupMinuteWeekday = parseInt(wakeupWeekday.split(":")[1]);
+	var sleepHourWeekday = parseInt(sleepWeekday.split(":")[0]);
+	if (sleepHourWeekday <= 12) {
+		sleepHourWeekday += 24;
+	}
+	var sleepMinuteWeekday = parseInt(sleepWeekday.split(":")[1]);
+	var wakeupHourWeekend = parseInt(wakeupWeekend.split(":")[0]);
+	var wakeupMinuteWeekend = parseInt(wakeupWeekend.split(":")[1]);
+	var sleepHourWeekend = parseInt(sleepWeekend.split(":")[0]);
+	if (sleepHourWeekend <= 12) {
+		sleepHourWeekend += 24;
+	}
+	var sleepMinuteWeekend = parseInt(sleepWeekend.split(":")[1]);
+
+	var startHour, startMinute, endHour, endMinute; //start time and end time of notifications
+	var nightlyLag, awakeInterval, step; // interval between now and the first notification date; interval between start time and end time
+
+	var data = "";
+
+	for (i = 0; i < 7; i++) {
+		var notifDay = dayOfWeek + 1 + i
+		if (notifDay > 7) {
+			notifDay -= 7;
+		}
+		if (notifDay == 6 || notifDay == 7) {
+			startHour = wakeupHourWeekend;
+			startMinute = wakeupMinuteWeekend;
+			endHour = sleepHourWeekend;
+			endMinute = sleepMinuteWeekend;
+		}
+		else {
+			startHour = wakeupHourWeekday;
+			startMinute = wakeupMinuteWeekday;
+			endHour = sleepHourWeekday;
+			endMinute = sleepMinuteWeekday;
+		}
+
+		nightlyLag = (((((24 - parseInt(currentHour) + parseInt(startHour))*60) - parseInt(currentMinute) + parseInt(startMinute))*60)*1000);
+		awakeInterval = (((((parseInt(endHour) - parseInt(startHour))*60) + parseInt(endMinute) - parseInt(startMinute))*60)*1000) - 60*60*1000;
+		step = parseInt(awakeInterval / 4);
+
+
+		//Then time for notifications is calculated as a random time within the range of + or - 60 minutes of the anchors. It is represented as the interval between the current time and the time of that notification
+		interval1 = (parseInt(nightlyLag) + 30*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000));
+        interval2 = (parseInt(nightlyLag) + 30*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step;
+        interval3 = (parseInt(nightlyLag) + 30*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step*2;
+        interval4 = (parseInt(nightlyLag) + 30*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step*3;
+        interval5 = (parseInt(nightlyLag) + 30*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step*4;
+
+        //This part of the code calculates a unique ID for each notification
+        a = 101+(parseInt(i)*100);
+        b = 102+(parseInt(i)*100);
+        c = 103+(parseInt(i)*100);
+        d = 104+(parseInt(i)*100);
+        e = 105+(parseInt(i)*100);
+
+        //This part of the code calculates the time when the notification should be sent by adding the time interval to the current date and time        
+        date1 = new Date(now + interval1);
+        date2 = new Date(now + interval2);
+        date3 = new Date(now + interval3);
+        date4 = new Date(now + interval4);
+        date5 = new Date(now + interval5);
+
+        d1 = date1.getFullYear()+"-"+(date1.getMonth()+1)+"-"+date1.getDate()+" "+date1.getHours()+":"+date1.getMinutes()+":"+date1.getSeconds();
+        d2 = date2.getFullYear()+"-"+(date2.getMonth()+1)+"-"+date2.getDate()+" "+date2.getHours()+":"+date2.getMinutes()+":"+date2.getSeconds();
+        d3 = date3.getFullYear()+"-"+(date3.getMonth()+1)+"-"+date3.getDate()+" "+date3.getHours()+":"+date3.getMinutes()+":"+date3.getSeconds();
+        d4 = date4.getFullYear()+"-"+(date4.getMonth()+1)+"-"+date4.getDate()+" "+date4.getHours()+":"+date4.getMinutes()+":"+date4.getSeconds();
+        d5 = date5.getFullYear()+"-"+(date5.getMonth()+1)+"-"+date5.getDate()+" "+date5.getHours()+":"+date5.getMinutes()+":"+date5.getSeconds();
+
+        //This part of the code schedules the notifications
+        cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: a, trigger: {at: date1}, text: 'Time for your next Survey!', title: "Hello, I'm back"});
+        cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: b, trigger: {at: date2}, text: 'Time for your next Survey!', title: "Hello, I'm back"});
+        cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: c, trigger: {at: date3}, text: 'Time for your next Survey!', title: "Hello, I'm back"});
+        cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: d, trigger: {at: date4}, text: 'Time for your next Survey!', title: "Hello, I'm back"});
+        cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: e, trigger: {at: date5}, text: 'Time for your next Survey!', title: "Hello, I'm back"});
+
+        data += "&n"+a+"="+d1+"&n"+b+"="+d2+"&n"+c+"="+d3+"&n"+d+"="+d4+"&n"+e+"="+d5;
+	}
+	return(data);
 }
 
 /*
