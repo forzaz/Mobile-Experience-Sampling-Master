@@ -18,17 +18,17 @@ date_default_timezone_set("Europe/Amsterdam");
 
 class Conf{
 	//Provide login details for the app that will be used.
-	const USER_NAME = 'app_user_name';
-	const PASSWORD  = 'app_user_password';
+	const USER_NAME = 'sampleu';
+	const PASSWORD  = 'Welcome@HTI';
 	
 	//Provide login details to the database
-	const DB_NAME		 = 'ExperienceSampler';
-	const DB_USER	 	 = 'user_name';
-	const DB_PASSWORD	 = 'user_password';
-	const DB_HOST		 = 'host_name'; //ofter just 'localhost'
+	const DB_NAME		 = 'db_ksmolders';
+	const DB_USER	 	 = 'ksmolders';
+	const DB_PASSWORD	 = 'Lpb97v*5';
+	const DB_HOST		 = 'localhost'; //ofter just 'localhost'
 	
-	const FROM_EMAIL	 = 'your@host.email'; 	 //used as sender of email messages
-	const APP_NAME		 = 'Spaced Learner App'; //used for email messages
+	const FROM_EMAIL	 = 'nonreply@sampleu.nl'; 	 //used as sender of email messages
+	const APP_NAME		 = 'SampleU'; //used for email messages
 }
 
 ?>
