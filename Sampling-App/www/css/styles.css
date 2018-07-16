@@ -593,3 +593,18 @@ form .required{
 	background-color: #CD3C65;
 	color: #fff;
 }
+
+.button#survey_next{
+	margin-bottom: 3em;
+	margin-top: 3em;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	height: auto;
+	color: #353E87;
+	border: 1px solid #353E87;
+}
+
+.button#survey_next:active{
+	background-color: #353E87;
+	color: #fff;
+}
