@@ -12,10 +12,6 @@
  * Released on: March, 2018
  */
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 //Check if incoming request is valid
 require 'php/Config.php';
 require 'php/Autorize.php';

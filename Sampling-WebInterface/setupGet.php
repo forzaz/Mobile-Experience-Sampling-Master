@@ -21,7 +21,7 @@ if(Autorize::check())
 	$db = new Database();
 
 	//execute some database code
-	$result = $db->query("SELECT * FROM Questions");
+	$result = $db->query("SELECT * FROM Setup");
 	if ($result->num_rows > 0) {
 		// output data of each row
 		while($row = $result->fetch_assoc()) {
@@ -34,8 +34,6 @@ if(Autorize::check())
 			echo ($temp == "" ? '0' : $row["Labels"]);
 			
 			echo "::" . $row["Required"];
-			echo "::" . $row["Frequency"];
-			echo "::" . $row["Page"];
 			echo "<br/>";
 		}
 	}
