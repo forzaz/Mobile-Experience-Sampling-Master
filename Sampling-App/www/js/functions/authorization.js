@@ -24,18 +24,18 @@ function autorizeUser()
 						storage.setItem("messages", "0");
 						storage.setItem("readMessages", "0");
 						survey.init(function(){
-							survey.retrieveQuestions(function(){
-								RetrieveMessages(function(){
-									if(data[2] === "1")
-									{
-										//this is a temporary password, let the user change it.
-										view.router.loadPage('resetpassword.html');
-									} else {
-										storage.setItem("login","true");
-										view.router.loadPage('menu.html');
-									}
-								});
+							//survey.retrieveQuestions(function(){
+							RetrieveMessages(function(){
+								if(data[2] === "1")
+								{
+									//this is a temporary password, let the user change it.
+									view.router.loadPage('resetpassword.html');
+								} else {
+									storage.setItem("login","true");
+									view.router.loadPage('menu.html');
+								}
 							});
+							//});
 						});
 					}
 					else
@@ -87,18 +87,21 @@ function registerUser()
 						var data = result.split("::");
 						if(data[0]==="true")
 						{
+							//alert("yes!");
 							survey.init(function(){
+								//alert("2");
 								survey.retrieveQuestions(function(){
-									RetrieveMessages(function(){
-										console.log("messages downloaded");
-										//user could be registered, proceed with the app.
-										storage.setItem("Uid",data[1]);
-										storage.setItem("login","true");
-										storage.setItem("messages", "0");
-										storage.setItem("readMessages", "0");
-										view.router.loadPage('menu.html');
-										myApp.alert("Thank you for registering.","You are registered!");
-									});
+									//alert("3");
+									//RetrieveMessages(function(){
+									//console.log("messages downloaded");
+									//user could be registered, proceed with the app.
+									storage.setItem("Uid",data[1]);
+									storage.setItem("login","true");
+									storage.setItem("messages", "0");
+									storage.setItem("readMessages", "0");
+									view.router.loadPage('setup.html');
+									myApp.alert("Thank you for registering.","You are registered!");
+									//});
 								});
 							});
 						}
@@ -208,7 +211,7 @@ function recoverPassword()
 			myApp.alert("Please fill in a valid email adress to reset your password.","No user found");
 		}
 	} else {
-		myApp.alert("Please make sure you have an internet connection to register an account.","No internet connection");
+		myApp.alert("Please make sure you have an internet connection to reset your password.","No internet connection");
 	}
 }
 
@@ -217,8 +220,8 @@ function recoverPassword()
 */
 function logout(){
 	//clear cache information
-	storage.clear();
-	cordova.plugins.notification.local.clearAll(unScheduleNotifications);
+	storage.removeItem("login");
+	//cordova.plugins.notification.local.clearAll(unScheduleNotifications);
 	
 	//return to index page.
 	view.hideNavbar(true);
