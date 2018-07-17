@@ -6,7 +6,9 @@ This project is led by Chao Zhang, Daniël Lakens, and Karin Smolders from Human
 The development of the app, including the design and coding of the front and back-end, was greatly helped by BOSONIC.design http://www.bosonic.design/
 
  
-#### Features of the current version (1.0.2)
+ 
+
+### Features of the current version (1.0.2)
 * Cordova-based; developing for Android and iOS by using only HTML, JavaScript, and CSS
 * Data are stored in MySQL database on your own server; privacy is fully protected as you control all your data; avoid violations with General Data Protection Regulation (GDPR) (EU)
 * Questionnaire design can be done through manipulation of the database (with GUI, e.g., phpMyAdmin or Adminer)
@@ -16,8 +18,11 @@ The development of the app, including the design and coding of the front and bac
 * One script to transform tables from your database to csv format for analyses in R, Python, SPSS, or Stata (available soon)
 
  
-#### Documentation and tutorial
+ 
+
+### Documentation and tutorial
 For now, you can refer to the documentation.pdf for instructions about how to customize and setup the app. We are working on a more researcher-friendly tutorial.
 
  
+
 If you have any questions, please contact chao.zhang87@gmail.com
