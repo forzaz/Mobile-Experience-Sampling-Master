@@ -71,12 +71,12 @@ CREATE TABLE `Notifications` (
 
 CREATE TABLE `Questions` (
   `Qid` int(11) NOT NULL,
-  `Qname` varchar(255) NOT NULL,
+  `Qname` varchar(60) NOT NULL,
   `Question` varchar(255) NOT NULL,
   `Type` varchar(255) NOT NULL DEFAULT 'ShortText',
   `Labels` varchar(255) NOT NULL,
   `Required` tinyint(1) NOT NULL DEFAULT 0,
-  `Frequency` varchar(255) NOT NULL DEFAULT 'ESM',
+  `Frequency` varchar(60) NOT NULL DEFAULT 'ESM',
   `Page` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -117,9 +117,9 @@ CREATE TABLE `Responses` (
 
 CREATE TABLE `Setup` (
   `Qid` int(11) NOT NULL,
-  `Qname` varchar(255) NOT NULL,
+  `Qname` varchar(60) NOT NULL,
   `Question` varchar(255) NOT NULL,
-  `Type` varchar(255) NOT NULL DEFAULT 'ShortText',
+  `Type` varchar(60) NOT NULL DEFAULT 'ShortText',
   `Labels` varchar(255) NOT NULL,
   `Required` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
