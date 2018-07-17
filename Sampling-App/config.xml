@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.tue.experienceSampler" version="1.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Experience Sampling</name>
+<widget id="com.example.sampleu" version="1.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>SampleU</name>
     <description>
         This app allows researchers to conduct surveys remotely using the mobile phone on Android and iOS.
     </description>
-    <author email="hti@tue.nl" href="https://www.tue.nl/en/university/departments/industrial-engineering-innovation-sciences/research/research-groups/human-technology-interaction/">
+    <author email="youremail@example.com" href="https://yourhomepage.com">
         Department of Human-Technology Interaction @ Eindhoven, University of Technology
     </author>
     <content src="index.html" />
@@ -14,15 +14,15 @@
     <allow-intent href="geo:*" />
     <allow-intent href="mailto:*" />
     <platform name="android">
-		<hook src="fixFirebasePlugin.js" type="after_platform_add" />
+        <hook src="fixFirebasePlugin.js" type="after_platform_add" />
         <allow-intent href="market:*" />
-        <access origin="http://yourweb.com" />
+        <access origin="http://yourserver.com" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <preference name="BackupWebStorage" value="none" />
-		<edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+        <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
             <string>Need camera access to take pictures.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
@@ -44,7 +44,7 @@
             <true />
         </edit-config>
     </platform>
-    <access origin="http://yourweb.com" />
+    <access origin="http://yourserver.com" />
     <access launch-external="yes" origin="mailto:*" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-camera" spec="^4.0.2" />
@@ -57,4 +57,10 @@
     <plugin name="cordova-plugin-file-transfer" spec="^1.7.1" />
     <plugin name="cordova-plugin-device" spec="^2.0.1" />
     <plugin name="cordova-plugin-local-notification" spec="^0.9.0-beta.3" />
+    <plugin name="cordova-plugin-firebase" spec="^1.0.5" />
+    <plugin name="cordova-plugin-googlemaps" spec="^2.3.3">
+        <variable name="API_KEY_FOR_ANDROID" value="AIzaSyDbuRR3TmekXWtvqzOoqdhJVwL2aNnXELo" />
+    </plugin>
+    <plugin name="cordova-sqlite-storage" spec="^2.3.1" />
+    <engine name="android" spec="^7.0.0" />
 </widget>
