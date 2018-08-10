@@ -111,7 +111,7 @@ function scheduleNotifications(wakeupWeekday, sleepWeekday, wakeupWeekend, sleep
 
 	var data = "";
 
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < 14; i++) {
 		var notifDay = dayOfWeek + 1 + i
 		if (notifDay > 7) {
 			notifDay -= 7;
