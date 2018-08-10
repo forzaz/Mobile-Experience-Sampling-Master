@@ -47,7 +47,7 @@ if(Autorize::check())
 	//process notification data
 	$data2 =  array();
 	for ($day=1; $day<=14; $day++) {
-		for ($session=1; $session<=8; $session++) {
+		for ($session=1; $session<=5; $session++) {
 			$val = Utilities::getAndSanitize('n'.$day.'0'.$session);
 			//$val = '2000-01-01 08:00:00';
 			$DID = $day;
