@@ -100,7 +100,8 @@ var survey = new function() {
 				error: function(xhr,status,error){
 					//server could not be reached, then get questions offline
 					survey.retrieveQuestionsOffline();
-				}
+				},
+				timeout: 3000 // sets timeout to 3 seconds
 			});
 		}
 		else
@@ -193,28 +194,35 @@ var survey = new function() {
 			//check if question has to be rendered
 			if(renderQuestion(data[0], data[6]) && (parseInt(data[7]) == parseInt(storage.surveyPage))) {
 				
-				//render input
-				qHTML = "";
-				if(qHTML === "")
-				{
-					modules.forEach(function(module){
-						if (typeof module.renderQuestions === "function" && qHTML === "") {
-							qHTML = module.renderQuestions(data[3],data[0],data[4]); 
-						}
-					});
-				}
-			
-				if(qHTML === ""){
-					console.log("WARNING: Question type not found for Question "+data[0]);
-				} 
-				else {
-					//render question
-					HTML += "<p class='question'>"+data[2];
-					if(data[5] === "1") HTML += " (required)"; 
-					HTML += "</p>";
-					HTML += qHTML;
-				}
+				//render the question
+				if (data[3] != "Instruction") {
+					//render input
+					qHTML = "";
+					if(qHTML === "")
+					{
+						modules.forEach(function(module){
+							if (typeof module.renderQuestions === "function" && qHTML === "") {
+								qHTML = module.renderQuestions(data[3],data[0],data[4]); 
+							}
+						});
+					}
 				
+					if(qHTML === ""){
+						console.log("WARNING: Question type not found for Question "+data[0]);
+					} 
+					else {
+						//add input to question text
+						HTML += "<p class='question'>"+data[2];
+						if(data[5] === "1") HTML += " (required)"; 
+						HTML += "</p>";
+						HTML += qHTML;
+					}
+				} 
+				//render instruction
+				else {
+					HTML += "<p class='instruction'>"+data[2];
+					HTML += "</p>";
+				}
 			}
 		});
 				
@@ -323,7 +331,7 @@ var survey = new function() {
 				
 				//serialize form information
 				survey.serialize(Rid,function(results){
-					if(results){
+					if(results || results == ""){
 						//everything is good, save the current date
 						var date = new Date();
 						var enddate = "";
@@ -423,21 +431,24 @@ var survey = new function() {
 								storage.setItem(key, true);
 							break;
 						}
-						
-						var info = {};
-						info.val = "";
-						info.checked = false;
-						info.error = false;
-						
-						modules.forEach(function(module){
-							if (typeof module.validate === "function" && info.checked === false) {
-								info = module.validate(q.Type,q.name,q.Required,rID);
-								if(info.error) returnFalse = true;
-							}
-						});
-						
-						if(info.val === ""){ info.val = "Empty";}
-						string += "&"+q.name+"="+encodeURIComponent(info.val);
+
+						//add the input value to the string
+						if (q.Type != "Instruction") {
+							var info = {};
+							info.val = "";
+							info.checked = false;
+							info.error = false;
+							
+							modules.forEach(function(module){
+								if (typeof module.validate === "function" && info.checked === false) {
+									info = module.validate(q.Type,q.name,q.Required,rID);
+									if(info.error) returnFalse = true;
+								}
+							});
+							
+							if(info.val === ""){ info.val = "Empty";}
+							string += "&"+q.name+"="+encodeURIComponent(info.val);
+						}
 					}
 				}
 			
@@ -525,7 +536,8 @@ var survey = new function() {
 								error: function(xhr,status,error){
 									//server not responding
 									$$(".messageOverlay").css("display","none");
-								}
+								},
+								timeout: 3000 // sets timeout to 3 seconds
 							});
 						}
 					}

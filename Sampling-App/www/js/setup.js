@@ -36,7 +36,8 @@ var setup = new function() {
 				//server could not be reached, then get questions offline
 				myApp.alert("Please make sure that you have internet connection to set up the app.","No internet connection");
 				$$("#questions").html(status + " " + error);
-			}
+			},
+			timeout: 3000 // sets timeout to 3 seconds
 		});
 	};
 	
@@ -57,27 +58,34 @@ var setup = new function() {
 			var data = question.split("::");//get parameters; 0 = qID, 1 = question name, 2 = question string, 3 = question type, 4 = labels, 5 = required boolean
 			qData.push({name:"q"+data[1], Type:data[3], Required:data[5]});
 				
-			//render input
-			qHTML = "";
-			if(qHTML === "")
-			{
-				modules.forEach(function(module){
-					if (typeof module.renderQuestions === "function" && qHTML === "") {
-						qHTML = module.renderQuestions(data[3],data[1],data[4]);
-					}
-				});
+			//render question
+			if (data[3] != "Instruction") {
+				qHTML = "";
+				if(qHTML === "")
+				{
+					modules.forEach(function(module){
+						if (typeof module.renderQuestions === "function" && qHTML === "") {
+							qHTML = module.renderQuestions(data[3],data[1],data[4]);
+						}
+					});
+				}
+				
+				if(qHTML === ""){
+					console.log("WARNING: Question type not found for Question "+data[0]); //change??
+				} 
+				else {
+					//render question
+					HTML += "<p class='question'>"+data[2];
+					if(data[5] === "1") HTML += " (required)"; 
+					HTML += "</p>";
+					HTML += qHTML;
+				}	
 			}
-			
-			if(qHTML === ""){
-				console.log("WARNING: Question type not found for Question "+data[0]); //change??
-			} 
+			//render instruction
 			else {
-				//render question
-				HTML += "<p class='question'>"+data[2];
-				if(data[5] === "1") HTML += " (required)"; 
+				HTML += "<p class='instruction'>"+data[2];
 				HTML += "</p>";
-				HTML += qHTML;
-			}	
+			}
 		});
 
 		//add setup questions to the screen
@@ -126,21 +134,23 @@ var setup = new function() {
 				break;
 			}
 			
-			var info = {};
-			info.val = "";
-			info.checked = false;
-			info.error = false;
+			//add the input value to the string
+			if (q.Type != "Instruction") {
+				var info = {};
+				info.val = "";
+				info.checked = false;
+				info.error = false;
+				
+				modules.forEach(function(module){
+					if (typeof module.validate === "function" && info.checked === false) {
+						info = module.validate(q.Type,q.name,q.Required,rID);
+						if(info.error) returnFalse = true;
+					}
+				});
 			
-			modules.forEach(function(module){
-				if (typeof module.validate === "function" && info.checked === false) {
-					info = module.validate(q.Type,q.name,q.Required,rID);
-					if(info.error) returnFalse = true;
-				}
-			});
-
-			
-			if(info.val === ""){ info.val = "Empty";}
-			string += "&"+q.name+"="+encodeURIComponent(info.val);
+				if(info.val === ""){ info.val = "Empty";}
+				string += "&"+q.name+"="+encodeURIComponent(info.val);
+			}
 		});
 
 		
@@ -167,7 +177,7 @@ var setup = new function() {
 			//serialize (get values and make it a string) of the questions.
 			var Rid = ""; //no need to save data offlie in setup, so use an empty string for Rid 
 			var serialize = setup.serialize(Rid);
-			if(serialize){
+			if(serialize || serialize == ""){
 				//questionaire is complete, send to server
 
 				//use the wakeup and sleep data to schedule notifications
@@ -198,7 +208,8 @@ var setup = new function() {
 						//server not responding
 						$$(".messageOverlay").css("display","none");
 						myApp.alert('Your setup is not saved, please try again','Server is not responding');
-					}
+					},
+					timeout: 3000 // sets timeout to 3 seconds
 				});
 			} else {
 				//a required question is not answered
