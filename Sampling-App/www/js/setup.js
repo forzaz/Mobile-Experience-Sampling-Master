@@ -148,7 +148,8 @@ var setup = new function() {
 					}
 				});
 			
-				if(info.val === ""){ info.val = "Empty";}
+				if(!info.val.replace(/\s/g, '').length){ info.val = "empty string";}
+				else if (info.val == 0 || info.val == "0") {info.val = "00";}
 				string += "&"+q.name+"="+encodeURIComponent(info.val);
 			}
 		});
