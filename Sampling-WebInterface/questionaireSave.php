@@ -35,13 +35,21 @@ if(Autorize::check())
 
 		//process questionaire data for saving into database
 		$data = array();
-		$result = $db->query("SELECT Qid FROM Questions");
+		$result = $db->query("SELECT Qid, Type FROM Questions");
 		if ($result->num_rows > 0) {
 			// output data of each row
 			while($row = $result->fetch_assoc()) {
 				$ID = $row["Qid"];
-				$val = Utilities::getAndSanitize('q'.$ID);
-				array_push($data, [ $ID , $RID, Utilities::stringFormat($val) ]);
+				$type = $row["Type"];
+				//$type = $db->query("SELECT Type FROM Questions WHERE Qname=".$name);
+				if($type == "Instruction") 
+				{	
+				}
+				else 
+				{
+					$val = Utilities::getAndSanitize('q'.$ID);
+					array_push($data, [ $ID , $RID, Utilities::stringFormat($val) ]);
+				}
 			}
 		}
 
