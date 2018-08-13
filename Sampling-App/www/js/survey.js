@@ -504,73 +504,107 @@ var survey = new function() {
 	this.uploadResponses = function(){
 		if(navigator.connection.type !== Connection.NONE && survey.db !== null){
 			
-			//internet is available, check for offline responses
-			survey.db.transaction(function (db) {
-				db.executeSql("SELECT * FROM Responses",[],function(db,results){
-					
-					if(results.rows.length > 0)
-					{
-						//responses found, lets send them to the server
-						$$(".messageOverlay span").html("Sending response...");
-						$$(".messageOverlay").css("display","table");
-						
-						var row;
-						for(var x = 0; x < results.rows.length; x++) {
-							row = results.rows.item(x);
-							
-							//start upload of response
-							$$.ajax({
-								url:WEB_BASE+"questionaireSave.php"+AUTORIZATION+survey.response(row.StartDate,row.EndDate)+row.SerializedString,
-								success: function(result){
-									var data = result.split("::");
-									if(data[0] === "success")
-									{
-										//do nothing
-									}
-									else
-									{
-										//There is something wrong with the response could not be uploaded now - try again later
-										$$(".messageOverlay").css("display","none");
-									}
-
-								},
-								error: function(xhr,status,error){
-									//server not responding
-									$$(".messageOverlay").css("display","none");
-								},
-								timeout: 3000 // sets timeout to 3 seconds
-							});
-						}
-					}
-				}); 
-			});
-
-			//awnsers are uploaded, next upload corresponding files.. if there are
-			survey.db.transaction(function (db) {
-				
-				//Check for files
-				db.executeSql("SELECT * FROM Uploads",[],function(db,results){
-					if(results.rows.length > 0)
-					{
-						//alert("files");
-						//files found, upload them
-						var row;
-						for(var x = 0; x < results.rows.length; x++) {
-							row = results.rows.item(x);
-							survey.uploadFile(row.Name,row.Uri,row.Format);
-						}
-						
-						//Delete all file information.
-						db.executeSql("DELETE FROM Uploads");
-					}
-				});
-			});
+			//update user UI
+			$$(".messageOverlay span").html("Sending response...");
+			$$(".messageOverlay").css("display","table");
 			
-			//Delete response from the database
-			survey.db.transaction(function (db) {
-				db.executeSql("DELETE FROM Responses");
-			});
+			//start uploading responses
+			survey.uploadOfflineResponses(
+				//succesfull response upload
+				function(){
+					//start uploading files
+					survey.uploadFiles(function(){
+						//uploading over, update user UI
+						$$(".messageOverlay").css("display","none");
+					});
+				}, 
+				//failure in response upload
+				function(){
+					//uploading over, update user UI
+					$$(".messageOverlay").css("display","none");
+				}
+			);
 		}
+	};
+	
+	/*
+		Uploads offline saved values of responses to the server.
+		- @var callBack = function that has to be executed after all responses are uploaded to the server.
+		- @var errorCallBack = function that has to be executed after an error occured during uploading.
+	*/
+	this.uploadOfflineResponses = function(callBack,errorCallBack){
+		survey.db.transaction(function (db) {
+			//search for a response
+			db.executeSql("SELECT * FROM Responses LIMIT 1",[],function(db,results){
+				if(results.rows.length > 0)
+				{
+					//response found, process it.
+					var row = results.rows.item(0);
+					
+					//start upload of response
+					$$.ajax({
+						url:WEB_BASE+"questionaireSave.php"+AUTORIZATION+survey.response(row.StartDate,row.EndDate)+row.SerializedString,
+						success: function(result){
+							var data = result.split("::");
+							if(data[0] === "success")
+							{
+								//delete response from offline database
+								survey.db.transaction(function (db) {
+									db.executeSql("DELETE FROM Responses WHERE Rid = ?",[row.Rid],function(db,results){
+										//check for an other response
+										survey.uploadOfflineResponses(callBack,errorCallBack);
+									});
+								});
+							}
+							else
+							{
+								errorCallBack();	
+							}
+						},
+						error: function(xhr,status,error){
+							errorCallBack();
+						}
+					});
+				}
+				else
+				{
+					//no responses found, go to next uploading step.
+					callBack();
+				}
+			});
+		});
+	};
+	
+	/*
+		Uploads offline saved values of responses to the server.
+		- @var callBack = function that has to be executed after all responses are uploaded to the server.
+	*/
+	this.uploadFiles = function(callBack){
+			
+		survey.db.transaction(function (db) {
+			//search for a file
+			db.executeSql("SELECT * FROM Uploads LIMIT 1",[],function(db,results){
+				if(results.rows.length > 0)
+				{
+					//file found, process it
+					var row = results.rows.item(0);
+					
+					//start upload
+					survey.uploadFile(row.Name,row.Uri,row.Format,function(){
+						//delete response from offline database
+						db.executeSql("DELETE FROM Uploads WHERE Rid = ?",[row.Rid], function(db,results){
+							//check for an other file
+							survey.uploadFiles(callBack);
+						});
+					});
+				}
+				else
+				{
+					//no file found, go to next uploading step.
+					callBack();
+				}
+			});
+		});
 	};
 	
 	/*
