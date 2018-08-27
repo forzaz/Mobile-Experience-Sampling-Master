@@ -116,11 +116,23 @@ function scheduleNotifications(wakeupWeekday, sleepWeekday, wakeupWeekend, sleep
 		if (notifDay > 7) {
 			notifDay -= 7;
 		}
-		if (notifDay == 6 || notifDay == 7) {
+		if (notifDay == 5) {
+			startHour = wakeupHourWeekday;
+			startMinute = wakeupMinuteWeekday;
+			endHour = sleepHourWeekend;
+			endMinute = sleepMinuteWeekend;
+		}
+		else if (notifDay == 6) {
 			startHour = wakeupHourWeekend;
 			startMinute = wakeupMinuteWeekend;
 			endHour = sleepHourWeekend;
 			endMinute = sleepMinuteWeekend;
+		}
+		else if (notifDay == 7) {
+			startHour = wakeupHourWeekend;
+			startMinute = wakeupMinuteWeekend;
+			endHour = sleepHourWeekday;
+			endMinute = sleepMinuteWeekday;
 		}
 		else {
 			startHour = wakeupHourWeekday;
@@ -130,16 +142,16 @@ function scheduleNotifications(wakeupWeekday, sleepWeekday, wakeupWeekend, sleep
 		}
 
 		nightlyLag = (((((24 - parseInt(currentHour) + parseInt(startHour))*60) - parseInt(currentMinute) + parseInt(startMinute))*60)*1000);
-		awakeInterval = (((((parseInt(endHour) - parseInt(startHour))*60) + parseInt(endMinute) - parseInt(startMinute))*60)*1000) - 60*60*1000;
+		awakeInterval = (((((parseInt(endHour) - parseInt(startHour))*60) + parseInt(endMinute) - parseInt(startMinute))*60)*1000) - 2 * 60*60*1000;
 		step = parseInt(awakeInterval / 4);
 
 
 		//Then time for notifications is calculated as a random time within the range of + or - 60 minutes of the anchors. It is represented as the interval between the current time and the time of that notification
-		interval1 = (parseInt(nightlyLag) + 30*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000));
-        interval2 = (parseInt(nightlyLag) + 30*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step;
-        interval3 = (parseInt(nightlyLag) + 30*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step*2;
-        interval4 = (parseInt(nightlyLag) + 30*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step*3;
-        interval5 = (parseInt(nightlyLag) + 30*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step*4;
+		interval1 = (parseInt(nightlyLag) + 60*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000));
+        interval2 = (parseInt(nightlyLag) + 60*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step;
+        interval3 = (parseInt(nightlyLag) + 60*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step*2;
+        interval4 = (parseInt(nightlyLag) + 60*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step*3;
+        interval5 = (parseInt(nightlyLag) + 60*60*1000 + parseInt(Math.round((Math.random()*2 - 1)*60*60*1000)) + ((parseInt(86400)*parseInt(i))*1000)) + step*4;
 
         //This part of the code calculates a unique ID for each notification
         a = 101+(parseInt(i)*100);
