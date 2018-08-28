@@ -41,7 +41,7 @@ if(Autorize::check())
 			while($row = $result->fetch_assoc()) {
 				$ID = $row["Qid"];
 				$type = $row["Type"];
-				//$type = $db->query("SELECT Type FROM Questions WHERE Qname=".$name);
+				//do not save data if question type is Instruction
 				if($type == "Instruction") 
 				{	
 				}
