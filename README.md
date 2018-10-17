@@ -12,7 +12,7 @@ The development of the app, including the design and coding of the front and bac
 * Support most common questionnaire types (e.g., Likert scale, slider, time-picker, text, etc.), but also taking photos, recording voices, and sharing geolocations
 * Flexible scheduling of notifications (time or signal contingent) can be done by coding in JavaScript
 * Messaging system using Firebase; ability to send reminders or other intervention contents to participants
-* One script to transform tables from your database to csv format for analyses in R, Python, SPSS, or Stata (available soon)
+* One script to transform tables from your database to csv format for analyses in R, Python, SPSS, or Stata
 
 ### Documentation and tutorial
 For now, you can refer to the documentation.pdf for instructions about how to customize and setup the app. We are working on a more researcher-friendly tutorial.
